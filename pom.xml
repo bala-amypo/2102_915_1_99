@@ -48,7 +48,7 @@
             <version>8.0.33</version>
         </dependency>
 
-        <!-- Security -->
+        <!-- Security (required for tests) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -100,31 +100,22 @@
     <build>
         <plugins>
 
-            <!-- Spring Boot -->
+            <!-- Spring Boot Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!--  FORCE TESTNG (FINAL FIX) -->
+            <!--FORCE TESTNG EXECUTION -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-testng</artifactId>
-                        <version>3.2.5</version>
-                    </dependency>
-                </dependencies>
-
                 <configuration>
                     <includes>
                         <include>**/*.java</include>
                     </includes>
-                    <useModulePath>false</useModulePath>
+                    <testNGArtifactName>org.testng:testng</testNGArtifactName>
                 </configuration>
             </plugin>
 
