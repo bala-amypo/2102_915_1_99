@@ -1,43 +1,34 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "depreciation_rules",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "ruleName")
-    }
-)
+@Table(name = "depreciation_rules")
 public class DepreciationRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String ruleName;
-    private String method;
-    private int usefulLifeYears;
-    private double salvageValue;
 
-    // ✅ Default constructor (MANDATORY for JPA)
+    private String method;
+
+    private Integer usefulLifeYears;
+
+    private Double salvageValue;
+
+    private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "depreciationRule")
+    private List<Asset> assets;
+
     public DepreciationRule() {
     }
-
-    // ✅ Parameterized constructor (optional but useful)
-    public DepreciationRule(String ruleName, String method, int usefulLifeYears, double salvageValue) {
-        this.ruleName = ruleName;
-        this.method = method;
-        this.usefulLifeYears = usefulLifeYears;
-        this.salvageValue = salvageValue;
-    }
-
-    // ✅ Getters & Setters
 
     public Long getId() {
         return id;
@@ -63,19 +54,27 @@ public class DepreciationRule {
         this.method = method;
     }
 
-    public int getUsefulLifeYears() {
+    public Integer getUsefulLifeYears() {
         return usefulLifeYears;
     }
 
-    public void setUsefulLifeYears(int usefulLifeYears) {
+    public void setUsefulLifeYears(Integer usefulLifeYears) {
         this.usefulLifeYears = usefulLifeYears;
     }
 
-    public double getSalvageValue() {
+    public Double getSalvageValue() {
         return salvageValue;
     }
 
-    public void setSalvageValue(double salvageValue) {
+    public void setSalvageValue(Double salvageValue) {
         this.salvageValue = salvageValue;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

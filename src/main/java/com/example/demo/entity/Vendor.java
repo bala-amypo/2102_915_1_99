@@ -1,51 +1,39 @@
 package com.example.demo.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 
 @Entity
-@Table(
-    name = "vendors",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "vendorName")
-    }
-)
+@Table(name = "vendors")
 public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String vendorName;
 
-    @Email
-    @Column(nullable = false)
     private String contactEmail;
 
     private String phone;
 
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "vendor")
+    private List<Asset> assets;
 
     public Vendor() {
     }
 
-    public Vendor(String vendorName, String contactEmail, String phone) {
-        this.vendorName = vendorName;
-        this.contactEmail = contactEmail;
-        this.phone = phone;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getVendorName() {
@@ -74,5 +62,17 @@ public class Vendor {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<Asset> getAssets() {
+        return assets;
+    }
+
+    public void setAssets(List<Asset> assets) {
+        this.assets = assets;
     }
 }

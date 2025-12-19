@@ -1,12 +1,12 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Vendor;
-import com.example.demo.service.VendorService;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.example.demo.entity.Vendor;
+import com.example.demo.service.VendorService;
 
 @RestController
 @RequestMapping("/api/vendors")
@@ -26,12 +26,7 @@ public class VendorController {
     }
 
     @GetMapping("/{id}")
-    public Vendor getVendorById(@PathVariable Long id) {
+    public Vendor getVendor(@PathVariable Long id) {
         return vendorService.getVendorById(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteVendor(@PathVariable Long id) {
-        vendorService.deleteVendor(id);
     }
 }

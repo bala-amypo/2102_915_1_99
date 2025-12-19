@@ -1,13 +1,14 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Vendor;
-import com.example.demo.repository.VendorRepository;
-import com.example.demo.service.VendorService;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.example.demo.entity.Vendor;
+import com.example.demo.repository.VendorRepository;
+import com.example.demo.service.VendorService;
 
 @Service
 public class VendorServiceImpl implements VendorService {
@@ -17,6 +18,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor createVendor(Vendor vendor) {
+        vendor.setCreatedAt(LocalDateTime.now());
         return vendorRepository.save(vendor);
     }
 
@@ -27,12 +29,6 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor getVendorById(Long id) {
-        return vendorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
-    }
-
-    @Override
-    public void deleteVendor(Long id) {
-        vendorRepository.deleteById(id);
+        return vendorRepository.findById(id).orElse(null);
     }
 }

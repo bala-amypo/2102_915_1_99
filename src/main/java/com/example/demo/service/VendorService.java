@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Vendor;
-
 import java.util.List;
+
+import com.example.demo.entity.Vendor;
 
 public interface VendorService {
 
@@ -11,6 +11,4 @@ public interface VendorService {
     List<Vendor> getAllVendors();
 
     Vendor getVendorById(Long id);
-
-    void deleteVendor(Long id);
 }

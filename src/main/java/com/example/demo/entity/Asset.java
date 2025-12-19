@@ -1,37 +1,48 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "assets", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "assetTag")
-})
+@Table(name = "assets")
 public class Asset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String assetTag;
 
     private String assetName;
+
     private LocalDate purchaseDate;
-    private double purchaseCost;
 
-    private String status = "ACTIVE";
+    private Double purchaseCost;
 
-    @ManyToOne(optional = false)
+    private String status;
+
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "vendor_id")
     private Vendor vendor;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "rule_id")
     private DepreciationRule depreciationRule;
 
-    public Asset() {}
+    public Asset() {
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAssetTag() {
@@ -58,12 +69,28 @@ public class Asset {
         this.purchaseDate = purchaseDate;
     }
 
-    public double getPurchaseCost() {
+    public Double getPurchaseCost() {
         return purchaseCost;
     }
 
-    public void setPurchaseCost(double purchaseCost) {
+    public void setPurchaseCost(Double purchaseCost) {
         this.purchaseCost = purchaseCost;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Vendor getVendor() {
@@ -80,13 +107,5 @@ public class Asset {
 
     public void setDepreciationRule(DepreciationRule depreciationRule) {
         this.depreciationRule = depreciationRule;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
