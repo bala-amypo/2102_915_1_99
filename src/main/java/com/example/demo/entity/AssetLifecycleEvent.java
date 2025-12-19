@@ -1,14 +1,12 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.ManyToOne;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "asset_lifecycle_events")
 public class AssetLifecycleEvent {
 
     @Id
@@ -16,28 +14,19 @@ public class AssetLifecycleEvent {
     private Long id;
 
     private String eventType;
+
     private String eventDescription;
+
     private LocalDate eventDate;
 
+    private LocalDateTime loggedAt;
+
     @ManyToOne
+    @JoinColumn(name = "asset_id")
     private Asset asset;
 
-    // ✅ Default constructor (MANDATORY for JPA)
     public AssetLifecycleEvent() {
     }
-
-    // ✅ Parameterized constructor (optional)
-    public AssetLifecycleEvent(String eventType,
-                               String eventDescription,
-                               LocalDate eventDate,
-                               Asset asset) {
-        this.eventType = eventType;
-        this.eventDescription = eventDescription;
-        this.eventDate = eventDate;
-        this.asset = asset;
-    }
-
-    // ✅ Getters & Setters
 
     public Long getId() {
         return id;
@@ -69,6 +58,14 @@ public class AssetLifecycleEvent {
 
     public void setEventDate(LocalDate eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public LocalDateTime getLoggedAt() {
+        return loggedAt;
+    }
+
+    public void setLoggedAt(LocalDateTime loggedAt) {
+        this.loggedAt = loggedAt;
     }
 
     public Asset getAsset() {

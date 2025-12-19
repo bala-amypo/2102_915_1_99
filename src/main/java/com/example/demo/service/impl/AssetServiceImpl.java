@@ -1,17 +1,18 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Asset;
-import com.example.demo.entity.Vendor;
-import com.example.demo.entity.DepreciationRule;
-import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.VendorRepository;
-import com.example.demo.repository.DepreciationRuleRepository;
-import com.example.demo.service.AssetService;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.example.demo.entity.Asset;
+import com.example.demo.entity.DepreciationRule;
+import com.example.demo.entity.Vendor;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.repository.DepreciationRuleRepository;
+import com.example.demo.repository.VendorRepository;
+import com.example.demo.service.AssetService;
 
 @Service
 public class AssetServiceImpl implements AssetService {
@@ -27,19 +28,13 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public Asset createAsset(Long vendorId, Long ruleId, Asset asset) {
-
-        Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
-
-        DepreciationRule rule = ruleRepository.findById(ruleId)
-                .orElseThrow(() -> new RuntimeException("Rule not found"));
-
-        if (asset.getPurchaseCost() < 0) {
-            throw new RuntimeException("Invalid purchase cost");
-        }
+        Vendor vendor = vendorRepository.findById(vendorId).orElse(null);
+        DepreciationRule rule = ruleRepository.findById(ruleId).orElse(null);
 
         asset.setVendor(vendor);
         asset.setDepreciationRule(rule);
+        asset.setStatus("ACTIVE");
+        asset.setCreatedAt(LocalDateTime.now());
 
         return assetRepository.save(asset);
     }
@@ -51,8 +46,7 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public Asset getAssetById(Long id) {
-        return assetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Asset not found"));
+        return assetRepository.findById(id).orElse(null);
     }
 
     @Override

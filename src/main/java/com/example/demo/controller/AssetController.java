@@ -1,12 +1,12 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Asset;
-import com.example.demo.service.AssetService;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.example.demo.entity.Asset;
+import com.example.demo.service.AssetService;
 
 @RestController
 @RequestMapping("/api/assets")
@@ -29,12 +29,12 @@ public class AssetController {
     }
 
     @GetMapping("/{id}")
-    public Asset getAssetById(@PathVariable Long id) {
+    public Asset getAsset(@PathVariable Long id) {
         return assetService.getAssetById(id);
     }
 
     @GetMapping("/status/{status}")
-    public List<Asset> getAssetsByStatus(@PathVariable String status) {
+    public List<Asset> getByStatus(@PathVariable String status) {
         return assetService.getAssetsByStatus(status);
     }
 }
