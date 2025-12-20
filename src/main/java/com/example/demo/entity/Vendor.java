@@ -11,11 +11,18 @@ public class Vendor {
 
     private String vendorName;
 
+    private String contactEmail;
+
     public Vendor() {
     }
 
     public Vendor(String vendorName) {
         this.vendorName = vendorName;
+    }
+
+    public Vendor(String vendorName, String contactEmail) {
+        this.vendorName = vendorName;
+        this.contactEmail = contactEmail;
     }
 
     public Long getId() {
@@ -32,5 +39,18 @@ public class Vendor {
 
     public void setVendorName(String vendorName) {
         this.vendorName = vendorName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    // REQUIRED because test uses wrong casing
+    public void setcontactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 }
