@@ -29,14 +29,10 @@ public class AssetDisposal {
         this.createdAt = LocalDateTime.now();
     }
 
-    public AssetDisposal(Asset asset, String disposalMethod, Double disposalValue, LocalDate disposalDate, User approvedBy) {
-        this.asset = asset;
-        this.disposalMethod = disposalMethod;
-        this.disposalValue = disposalValue;
-        this.disposalDate = disposalDate;
-        this.approvedBy = approvedBy;
-        this.createdAt = LocalDateTime.now();
-    }
-
     public Long getId() { return id; }
+    public Asset getAsset() { return asset; }
+
+    public void setAsset(Asset asset) { this.asset = asset; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
 }

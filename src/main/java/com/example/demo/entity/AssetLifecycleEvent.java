@@ -25,13 +25,8 @@ public class AssetLifecycleEvent {
         this.loggedAt = LocalDateTime.now();
     }
 
-    public AssetLifecycleEvent(Asset asset, String eventType, String eventDescription, LocalDate eventDate) {
-        this.asset = asset;
-        this.eventType = eventType;
-        this.eventDescription = eventDescription;
-        this.eventDate = eventDate;
-        this.loggedAt = LocalDateTime.now();
-    }
-
     public Long getId() { return id; }
+
+    public void setAsset(Asset asset) { this.asset = asset; }
+    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
 }

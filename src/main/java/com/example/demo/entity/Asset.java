@@ -41,18 +41,13 @@ public class Asset {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Asset(String assetTag, String assetName, LocalDate purchaseDate, Double purchaseCost) {
-        this.assetTag = assetTag;
-        this.assetName = assetName;
-        this.purchaseDate = purchaseDate;
-        this.purchaseCost = purchaseCost;
-        this.status = "ACTIVE";
-        this.createdAt = LocalDateTime.now();
-    }
-
     public Long getId() { return id; }
     public String getAssetTag() { return assetTag; }
     public String getStatus() { return status; }
+    public Vendor getVendor() { return vendor; }
+    public DepreciationRule getDepreciationRule() { return depreciationRule; }
 
+    public void setVendor(Vendor vendor) { this.vendor = vendor; }
+    public void setDepreciationRule(DepreciationRule depreciationRule) { this.depreciationRule = depreciationRule; }
     public void setStatus(String status) { this.status = status; }
 }
