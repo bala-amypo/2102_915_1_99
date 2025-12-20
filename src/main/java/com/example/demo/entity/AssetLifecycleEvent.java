@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 public class AssetLifecycleEvent {
@@ -14,29 +13,43 @@ public class AssetLifecycleEvent {
     private String eventType;
     private String eventDescription;
     private LocalDate eventDate;
-    private LocalDateTime loggedAt;
 
     @ManyToOne
     private Asset asset;
 
-    public AssetLifecycleEvent() {
-        this.loggedAt = LocalDateTime.now();
+    public Long getId() {
+        return id;
     }
 
-    public Long getId() { return id; }
+    public String getEventType() {
+        return eventType;
+    }
 
-    public String getEventType() { return eventType; }
-    public void setEventType(String eventType) { this.eventType = eventType; }
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
-    public String getEventDescription() { return eventDescription; }
-    public void setEventDescription(String eventDescription) { this.eventDescription = eventDescription; }
+    public String getEventDescription() {
+        return eventDescription;
+    }
 
-    public LocalDate getEventDate() { return eventDate; }
-    public void setEventDate(LocalDate eventDate) { this.eventDate = eventDate; }
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
 
-    public LocalDateTime getLoggedAt() { return loggedAt; }
-    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
+    public LocalDate getEventDate() {
+        return eventDate;
+    }
 
-    public Asset getAsset() { return asset; }
-    public void setAsset(Asset asset) { this.asset = asset; }
+    public void setEventDate(LocalDate eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public Asset getAsset() {
+        return asset;
+    }
+
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
 }

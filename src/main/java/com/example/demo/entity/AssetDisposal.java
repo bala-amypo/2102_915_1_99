@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 public class AssetDisposal {
@@ -14,35 +13,54 @@ public class AssetDisposal {
     private String disposalMethod;
     private double disposalValue;
     private LocalDate disposalDate;
-    private LocalDateTime createdAt;
 
-    @OneToOne
+    @ManyToOne
     private Asset asset;
 
     @ManyToOne
     private User approvedBy;
 
-    public AssetDisposal() {
-        this.createdAt = LocalDateTime.now();
+    public Long getId() {
+        return id;
     }
 
-    public Long getId() { return id; }
+    public String getDisposalMethod() {
+        return disposalMethod;
+    }
 
-    public String getDisposalMethod() { return disposalMethod; }
-    public void setDisposalMethod(String disposalMethod) { this.disposalMethod = disposalMethod; }
+    public void setDisposalMethod(String disposalMethod) {
+        this.disposalMethod = disposalMethod;
+    }
 
-    public double getDisposalValue() { return disposalValue; }
-    public void setDisposalValue(double disposalValue) { this.disposalValue = disposalValue; }
+    public double getDisposalValue() {
+        return disposalValue;
+    }
 
-    public LocalDate getDisposalDate() { return disposalDate; }
-    public void setDisposalDate(LocalDate disposalDate) { this.disposalDate = disposalDate; }
+    public void setDisposalValue(double disposalValue) {
+        this.disposalValue = disposalValue;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDate getDisposalDate() {
+        return disposalDate;
+    }
 
-    public Asset getAsset() { return asset; }
-    public void setAsset(Asset asset) { this.asset = asset; }
+    public void setDisposalDate(LocalDate disposalDate) {
+        this.disposalDate = disposalDate;
+    }
 
-    public User getApprovedBy() { return approvedBy; }
-    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
+    public Asset getAsset() {
+        return asset;
+    }
+
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(User approvedBy) {
+        this.approvedBy = approvedBy;
+    }
 }
