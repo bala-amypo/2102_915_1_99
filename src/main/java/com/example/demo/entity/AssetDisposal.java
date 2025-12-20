@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class AssetDisposal {
@@ -15,6 +16,8 @@ public class AssetDisposal {
     private double disposalValue;
 
     private LocalDate disposalDate;
+
+    private LocalDateTime createdAt;
 
     @ManyToOne
     private Asset asset;
@@ -61,6 +64,14 @@ public class AssetDisposal {
 
     public void setDisposalDate(LocalDate disposalDate) {
         this.disposalDate = disposalDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Asset getAsset() {
