@@ -9,17 +9,35 @@ public class Vendor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String vendorName;
+    private String contactEmail;
+    private String contactPhone;
 
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getVendorName() {
+        return vendorName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
     }
 }
