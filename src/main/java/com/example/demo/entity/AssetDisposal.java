@@ -1,9 +1,8 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
 
 @Entity
 @Table(name = "asset_disposals")
@@ -14,11 +13,8 @@ public class AssetDisposal {
     private Long id;
 
     private String disposalMethod;
-
     private Double disposalValue;
-
     private LocalDate disposalDate;
-
     private LocalDateTime createdAt;
 
     @OneToOne
@@ -30,61 +26,17 @@ public class AssetDisposal {
     private User approvedBy;
 
     public AssetDisposal() {
+        this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDisposalMethod() {
-        return disposalMethod;
-    }
-
-    public void setDisposalMethod(String disposalMethod) {
-        this.disposalMethod = disposalMethod;
-    }
-
-    public Double getDisposalValue() {
-        return disposalValue;
-    }
-
-    public void setDisposalValue(Double disposalValue) {
-        this.disposalValue = disposalValue;
-    }
-
-    public LocalDate getDisposalDate() {
-        return disposalDate;
-    }
-
-    public void setDisposalDate(LocalDate disposalDate) {
-        this.disposalDate = disposalDate;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Asset getAsset() {
-        return asset;
-    }
-
-    public void setAsset(Asset asset) {
+    public AssetDisposal(Asset asset, String disposalMethod, Double disposalValue, LocalDate disposalDate, User approvedBy) {
         this.asset = asset;
-    }
-
-    public User getApprovedBy() {
-        return approvedBy;
-    }
-
-    public void setApprovedBy(User approvedBy) {
+        this.disposalMethod = disposalMethod;
+        this.disposalValue = disposalValue;
+        this.disposalDate = disposalDate;
         this.approvedBy = approvedBy;
+        this.createdAt = LocalDateTime.now();
     }
+
+    public Long getId() { return id; }
 }
