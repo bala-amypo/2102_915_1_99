@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "asset_disposals")
 public class AssetDisposal {
 
     @Id
@@ -13,16 +12,14 @@ public class AssetDisposal {
     private Long id;
 
     private String disposalMethod;
-    private Double disposalValue;
+    private double disposalValue;
     private LocalDate disposalDate;
     private LocalDateTime createdAt;
 
     @OneToOne
-    @JoinColumn(name = "asset_id")
     private Asset asset;
 
     @ManyToOne
-    @JoinColumn(name = "approved_by")
     private User approvedBy;
 
     public AssetDisposal() {
@@ -30,9 +27,22 @@ public class AssetDisposal {
     }
 
     public Long getId() { return id; }
-    public Asset getAsset() { return asset; }
 
-    public void setAsset(Asset asset) { this.asset = asset; }
+    public String getDisposalMethod() { return disposalMethod; }
+    public void setDisposalMethod(String disposalMethod) { this.disposalMethod = disposalMethod; }
+
+    public double getDisposalValue() { return disposalValue; }
+    public void setDisposalValue(double disposalValue) { this.disposalValue = disposalValue; }
+
+    public LocalDate getDisposalDate() { return disposalDate; }
+    public void setDisposalDate(LocalDate disposalDate) { this.disposalDate = disposalDate; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Asset getAsset() { return asset; }
+    public void setAsset(Asset asset) { this.asset = asset; }
+
+    public User getApprovedBy() { return approvedBy; }
     public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
 }

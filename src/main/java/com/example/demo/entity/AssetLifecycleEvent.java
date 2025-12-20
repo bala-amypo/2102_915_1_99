@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "asset_lifecycle_events")
 public class AssetLifecycleEvent {
 
     @Id
@@ -18,7 +17,6 @@ public class AssetLifecycleEvent {
     private LocalDateTime loggedAt;
 
     @ManyToOne
-    @JoinColumn(name = "asset_id")
     private Asset asset;
 
     public AssetLifecycleEvent() {
@@ -27,6 +25,18 @@ public class AssetLifecycleEvent {
 
     public Long getId() { return id; }
 
-    public void setAsset(Asset asset) { this.asset = asset; }
+    public String getEventType() { return eventType; }
+    public void setEventType(String eventType) { this.eventType = eventType; }
+
+    public String getEventDescription() { return eventDescription; }
+    public void setEventDescription(String eventDescription) { this.eventDescription = eventDescription; }
+
+    public LocalDate getEventDate() { return eventDate; }
+    public void setEventDate(LocalDate eventDate) { this.eventDate = eventDate; }
+
+    public LocalDateTime getLoggedAt() { return loggedAt; }
     public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
+
+    public Asset getAsset() { return asset; }
+    public void setAsset(Asset asset) { this.asset = asset; }
 }
