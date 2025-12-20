@@ -14,7 +14,7 @@ import java.util.Set;
 public class JwtUtil {
 
     private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long EXPIRY = 1000 * 60 * 60 * 10;
+    private static final long EXPIRATION = 1000 * 60 * 60 * 10;
 
     public String generateToken(String email, Long userId, Set<String> roles) {
         return Jwts.builder()
@@ -23,14 +23,17 @@ public class JwtUtil {
                 .claim("userId", userId)
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRY))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(KEY)
                 .compact();
     }
 
     public Claims getClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(KEY).build()
-                .parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public boolean validateToken(String token) {
