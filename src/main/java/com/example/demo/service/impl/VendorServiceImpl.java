@@ -1,34 +1,28 @@
 package com.example.demo.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.example.demo.entity.Vendor;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class VendorServiceImpl implements VendorService {
 
-    @Autowired
-    private VendorRepository vendorRepository;
+    private final VendorRepository repository;
 
-    @Override
-    public Vendor createVendor(Vendor vendor) {
-        vendor.setCreatedAt(LocalDateTime.now());
-        return vendorRepository.save(vendor);
+    public VendorServiceImpl(VendorRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public List<Vendor> getAllVendors() {
-        return vendorRepository.findAll();
+    public Vendor save(Vendor vendor) {
+        return repository.save(vendor);
     }
 
     @Override
-    public Vendor getVendorById(Long id) {
-        return vendorRepository.findById(id).orElse(null);
+    public List<Vendor> findAll() {
+        return repository.findAll();
     }
 }

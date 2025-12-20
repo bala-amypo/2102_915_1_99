@@ -1,34 +1,28 @@
 package com.example.demo.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.example.demo.entity.DepreciationRule;
 import com.example.demo.repository.DepreciationRuleRepository;
 import com.example.demo.service.DepreciationRuleService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class DepreciationRuleServiceImpl implements DepreciationRuleService {
 
-    @Autowired
-    private DepreciationRuleRepository ruleRepository;
+    private final DepreciationRuleRepository repository;
 
-    @Override
-    public DepreciationRule createRule(DepreciationRule rule) {
-        rule.setCreatedAt(LocalDateTime.now());
-        return ruleRepository.save(rule);
+    public DepreciationRuleServiceImpl(DepreciationRuleRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public List<DepreciationRule> getAllRules() {
-        return ruleRepository.findAll();
+    public DepreciationRule save(DepreciationRule rule) {
+        return repository.save(rule);
     }
 
     @Override
-    public DepreciationRule getRuleById(Long id) {
-        return ruleRepository.findById(id).orElse(null);
+    public List<DepreciationRule> findAll() {
+        return repository.findAll();
     }
 }
