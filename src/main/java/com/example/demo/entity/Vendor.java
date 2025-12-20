@@ -10,11 +10,20 @@ public class Vendor {
     private Long id;
 
     private String vendorName;
-    private String contactEmail;
-    private String contactPhone;
+
+    public Vendor() {
+    }
+
+    public Vendor(String vendorName) {
+        this.vendorName = vendorName;
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getVendorName() {
@@ -23,21 +32,5 @@ public class Vendor {
 
     public void setVendorName(String vendorName) {
         this.vendorName = vendorName;
-    }
-
-    public String getContactEmail() {
-        return contactEmail;
-    }
-
-    public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
-    }
-
-    public String getContactPhone() {
-        return contactPhone;
-    }
-
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
     }
 }

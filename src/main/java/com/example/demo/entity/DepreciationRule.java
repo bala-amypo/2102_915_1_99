@@ -10,12 +10,29 @@ public class DepreciationRule {
     private Long id;
 
     private String ruleName;
+
     private String method;
+
     private int usefulLifeYears;
+
     private double salvageValue;
+
+    public DepreciationRule() {
+    }
+
+    public DepreciationRule(String ruleName, String method, int usefulLifeYears, double salvageValue) {
+        this.ruleName = ruleName;
+        this.method = method;
+        this.usefulLifeYears = usefulLifeYears;
+        this.salvageValue = salvageValue;
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRuleName() {

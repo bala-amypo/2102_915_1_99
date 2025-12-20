@@ -11,9 +11,13 @@ public class Asset {
     private Long id;
 
     private String assetTag;
+
     private String assetName;
+
     private LocalDate purchaseDate;
+
     private double purchaseCost;
+
     private String status;
 
     @ManyToOne
@@ -22,8 +26,23 @@ public class Asset {
     @ManyToOne
     private DepreciationRule depreciationRule;
 
+    public Asset() {
+    }
+
+    public Asset(String assetTag, String assetName, LocalDate purchaseDate, double purchaseCost, String status) {
+        this.assetTag = assetTag;
+        this.assetName = assetName;
+        this.purchaseDate = purchaseDate;
+        this.purchaseCost = purchaseCost;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAssetTag() {
@@ -58,6 +77,14 @@ public class Asset {
         this.purchaseCost = purchaseCost;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public Vendor getVendor() {
         return vendor;
     }
@@ -72,13 +99,5 @@ public class Asset {
 
     public void setDepreciationRule(DepreciationRule depreciationRule) {
         this.depreciationRule = depreciationRule;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }

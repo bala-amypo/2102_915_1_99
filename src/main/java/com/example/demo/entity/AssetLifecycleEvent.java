@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 public class AssetLifecycleEvent {
@@ -12,15 +11,29 @@ public class AssetLifecycleEvent {
     private Long id;
 
     private String eventType;
+
     private String eventDescription;
+
     private LocalDate eventDate;
-    private LocalDateTime loggedAt;
 
     @ManyToOne
     private Asset asset;
 
+    public AssetLifecycleEvent() {
+    }
+
+    public AssetLifecycleEvent(String eventType, String eventDescription, LocalDate eventDate) {
+        this.eventType = eventType;
+        this.eventDescription = eventDescription;
+        this.eventDate = eventDate;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEventType() {
@@ -45,14 +58,6 @@ public class AssetLifecycleEvent {
 
     public void setEventDate(LocalDate eventDate) {
         this.eventDate = eventDate;
-    }
-
-    public LocalDateTime getLoggedAt() {
-        return loggedAt;
-    }
-
-    public void setLoggedAt(LocalDateTime loggedAt) {
-        this.loggedAt = loggedAt;
     }
 
     public Asset getAsset() {
