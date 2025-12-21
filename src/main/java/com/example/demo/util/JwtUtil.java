@@ -4,27 +4,19 @@ package com.example.demo.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 @Component
 public class JwtUtil {
     
-    @Value("${jwt.secret:mySecretKey}")
-    private String secret;
-    
-    @Value("${jwt.expiration:86400000}")
-    private long expiration;
-    
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
-    }
+    private String secret = "mySecretKey";
+    private long expiration = 86400000; // 24 hours
     
     public String generateToken(String email, Long userId, Set<String> roles) {
         Map<String, Object> claims = new HashMap<>();
@@ -37,7 +29,7 @@ public class JwtUtil {
             .setSubject(email)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+            .signWith(SignatureAlgorithm.HS256, secret)
             .compact();
     }
     
@@ -55,9 +47,8 @@ public class JwtUtil {
     }
     
     public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
+        return Jwts.parser()
+            .setSigningKey(secret)
             .parseClaimsJws(token)
             .getBody();
     }
@@ -66,7 +57,7 @@ public class JwtUtil {
         return getAllClaimsFromToken(token);
     }
     
-    public Boolean isTokenExpired(String token) {
+    private Boolean isTokenExpired(String token) {
         Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
@@ -77,6 +68,11 @@ public class JwtUtil {
     }
     
     public Boolean validateToken(String token) {
-        return !isTokenExpired(token);
+        try {
+            getAllClaimsFromToken(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
