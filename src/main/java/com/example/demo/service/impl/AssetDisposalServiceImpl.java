@@ -41,10 +41,10 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
         AssetDisposal disposal = disposalRepository.findById(disposalId)
                 .orElseThrow(() -> new RuntimeException("Disposal not found"));
 
-        User dummyAdmin = userRepository.findAll().stream().findFirst()
+        User admin = userRepository.findAll().stream().findFirst()
                 .orElseThrow(() -> new RuntimeException("No users found"));
 
-        disposal.setApprovedBy(dummyAdmin);
+        disposal.setApprovedBy(admin);
 
         Asset asset = disposal.getAsset();
         asset.setStatus("DISPOSED");
