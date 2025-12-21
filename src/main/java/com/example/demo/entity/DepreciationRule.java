@@ -19,16 +19,14 @@ public class DepreciationRule {
     private int usefulLifeYears;
     private double salvageValue;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "depreciationRule", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Asset> assets;
 
-    public DepreciationRule() {}
-
-    public DepreciationRule(String ruleName) {
-        this.ruleName = ruleName;
+    public DepreciationRule() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() { return id; }
@@ -47,4 +45,5 @@ public class DepreciationRule {
     public void setSalvageValue(double salvageValue) { this.salvageValue = salvageValue; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

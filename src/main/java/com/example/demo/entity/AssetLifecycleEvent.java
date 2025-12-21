@@ -16,14 +16,16 @@ public class AssetLifecycleEvent {
     private String eventDescription;
     private LocalDate eventDate;
 
-    private LocalDateTime loggedAt = LocalDateTime.now();
+    private LocalDateTime loggedAt;
 
     @ManyToOne
     @JoinColumn(name = "asset_id")
     @JsonIgnore
     private Asset asset;
 
-    public AssetLifecycleEvent() {}
+    public AssetLifecycleEvent() {
+        this.loggedAt = LocalDateTime.now();
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -36,6 +38,9 @@ public class AssetLifecycleEvent {
 
     public LocalDate getEventDate() { return eventDate; }
     public void setEventDate(LocalDate eventDate) { this.eventDate = eventDate; }
+
+    public LocalDateTime getLoggedAt() { return loggedAt; }
+    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
 
     public Asset getAsset() { return asset; }
     public void setAsset(Asset asset) { this.asset = asset; }

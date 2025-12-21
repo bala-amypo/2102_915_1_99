@@ -16,7 +16,7 @@ public class AssetDisposal {
     private double disposalValue;
     private LocalDate disposalDate;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @OneToOne
     @JoinColumn(name = "asset_id")
@@ -26,7 +26,9 @@ public class AssetDisposal {
     @ManyToOne
     private User approvedBy;
 
-    public AssetDisposal() {}
+    public AssetDisposal() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -39,6 +41,9 @@ public class AssetDisposal {
 
     public LocalDate getDisposalDate() { return disposalDate; }
     public void setDisposalDate(LocalDate disposalDate) { this.disposalDate = disposalDate; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public Asset getAsset() { return asset; }
     public void setAsset(Asset asset) { this.asset = asset; }

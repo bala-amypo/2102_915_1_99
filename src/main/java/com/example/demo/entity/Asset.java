@@ -21,7 +21,7 @@ public class Asset {
     private double purchaseCost;
     private String status = "ACTIVE";
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "vendor_id")
@@ -39,7 +39,9 @@ public class Asset {
     @JsonIgnore
     private AssetDisposal disposal;
 
-    public Asset() {}
+    public Asset() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -58,6 +60,9 @@ public class Asset {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public Vendor getVendor() { return vendor; }
     public void setVendor(Vendor vendor) { this.vendor = vendor; }
