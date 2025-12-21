@@ -1,11 +1,9 @@
-// JwtUtil.java (Updated with correct imports)
 package com.example.demo.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +12,6 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    
     private String secret = "mySecretKey";
     private long expiration = 86400000; // 24 hours
     

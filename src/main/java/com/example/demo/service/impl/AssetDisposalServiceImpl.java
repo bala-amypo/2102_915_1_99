@@ -1,4 +1,3 @@
-// AssetDisposalServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
@@ -11,13 +10,11 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AssetDisposalService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 
 @Service
 @Transactional
 public class AssetDisposalServiceImpl implements AssetDisposalService {
-    
     private final AssetDisposalRepository disposalRepository;
     private final AssetRepository assetRepository;
     private final UserRepository userRepository;
@@ -41,7 +38,6 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
         
         disposal.setAsset(asset);
         disposal.setCreatedAt(LocalDateTime.now());
-        
         return disposalRepository.save(disposal);
     }
     
@@ -53,7 +49,6 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
         User admin = userRepository.findById(adminId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
-        // Check if user has ADMIN role
         boolean isAdmin = admin.getRoles().stream()
             .anyMatch(role -> "ADMIN".equals(role.getName()));
         
@@ -62,7 +57,6 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
         }
         
         disposal.setApprovedBy(admin);
-        
         Asset asset = disposal.getAsset();
         asset.setStatus("DISPOSED");
         assetRepository.save(asset);

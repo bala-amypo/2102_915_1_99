@@ -1,4 +1,3 @@
-// AssetLifecycleEventServiceImpl.java (Updated)
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
@@ -9,7 +8,6 @@ import com.example.demo.repository.AssetRepository;
 import com.example.demo.service.AssetLifecycleEventService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +15,6 @@ import java.util.List;
 @Service
 @Transactional
 public class AssetLifecycleEventServiceImpl implements AssetLifecycleEventService {
-    
     private final AssetLifecycleEventRepository eventRepository;
     private final AssetRepository assetRepository;
     
@@ -46,7 +43,6 @@ public class AssetLifecycleEventServiceImpl implements AssetLifecycleEventServic
         
         event.setAsset(asset);
         event.setLoggedAt(LocalDateTime.now());
-        
         return eventRepository.save(event);
     }
     
