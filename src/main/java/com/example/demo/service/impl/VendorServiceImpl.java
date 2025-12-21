@@ -1,8 +1,7 @@
-// VendorServiceImpl.java
+// VendorServiceImpl.java (Updated)
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Vendor;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorService;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,8 @@ public class VendorServiceImpl implements VendorService {
                 throw new IllegalArgumentException("Vendor name already exists");
             });
         
-        if (!EMAIL_PATTERN.matcher(vendor.getContactEmail()).matches()) {
+        if (vendor.getContactEmail() == null || 
+            !EMAIL_PATTERN.matcher(vendor.getContactEmail()).matches()) {
             throw new IllegalArgumentException("Invalid email format");
         }
         

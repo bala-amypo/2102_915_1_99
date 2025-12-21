@@ -1,4 +1,4 @@
-// AssetLifecycleEventServiceImpl.java
+// AssetLifecycleEventServiceImpl.java (Updated)
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
@@ -40,7 +40,7 @@ public class AssetLifecycleEventServiceImpl implements AssetLifecycleEventServic
             throw new IllegalArgumentException("Event description cannot be blank");
         }
         
-        if (event.getEventDate().isAfter(LocalDate.now())) {
+        if (event.getEventDate() == null || event.getEventDate().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Event date cannot be in the future");
         }
         

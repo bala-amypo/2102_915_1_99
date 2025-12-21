@@ -1,4 +1,4 @@
-// AssetServiceImpl.java
+// AssetServiceImpl.java (Updated)
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
@@ -38,11 +38,11 @@ public class AssetServiceImpl implements AssetService {
         DepreciationRule rule = ruleRepository.findById(ruleId)
             .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found"));
         
-        if (asset.getPurchaseCost() <= 0) {
+        if (asset.getPurchaseCost() == null || asset.getPurchaseCost() <= 0) {
             throw new IllegalArgumentException("Purchase cost must be greater than 0");
         }
         
-        if (assetRepository.existsByAssetTag(asset.getAssetTag())) {
+        if (asset.getAssetTag() == null || assetRepository.existsByAssetTag(asset.getAssetTag())) {
             throw new IllegalArgumentException("Asset tag already exists");
         }
         
