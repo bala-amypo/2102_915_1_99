@@ -1,51 +1,44 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
-import com.example.demo.entity.DepreciationRule;
 import com.example.demo.entity.Vendor;
+import com.example.demo.entity.DepreciationRule;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.DepreciationRuleRepository;
 import com.example.demo.repository.VendorRepository;
+import com.example.demo.repository.DepreciationRuleRepository;
 import com.example.demo.service.AssetService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@Transactional
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
     private final VendorRepository vendorRepository;
-    private final DepreciationRuleRepository ruleRepository;
+    private final DepreciationRuleRepository depreciationRuleRepository;
 
-    public AssetServiceImpl(
-            AssetRepository assetRepository,
-            VendorRepository vendorRepository,
-            DepreciationRuleRepository ruleRepository) {
-
+    public AssetServiceImpl(AssetRepository assetRepository, VendorRepository vendorRepository, 
+                           DepreciationRuleRepository depreciationRuleRepository) {
         this.assetRepository = assetRepository;
         this.vendorRepository = vendorRepository;
-        this.ruleRepository = ruleRepository;
+        this.depreciationRuleRepository = depreciationRuleRepository;
     }
 
     @Override
     public Asset createAsset(Long vendorId, Long ruleId, Asset asset) {
-
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
-
-        DepreciationRule rule = ruleRepository.findById(ruleId)
+        
+        DepreciationRule rule = depreciationRuleRepository.findById(ruleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found"));
 
-        if (asset.getPurchaseCost() == null || asset.getPurchaseCost() <= 0) {
+        if (asset.getPurchaseCost() <= 0) {
             throw new IllegalArgumentException("Purchase cost must be greater than 0");
         }
 
-        if (asset.getAssetTag() == null || assetRepository.existsByAssetTag(asset.getAssetTag())) {
+        if (assetRepository.existsByAssetTag(asset.getAssetTag())) {
             throw new IllegalArgumentException("Asset tag already exists");
         }
 
