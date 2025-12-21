@@ -1,4 +1,4 @@
-// Asset.java
+// Asset.java (Updated with default status)
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -31,7 +31,7 @@ public class Asset {
     @JoinColumn(name = "depreciation_rule_id")
     private DepreciationRule depreciationRule;
     
-    private String status = "ACTIVE";
+    private String status;
     
     private LocalDateTime createdAt;
     
@@ -41,7 +41,10 @@ public class Asset {
     @OneToOne(mappedBy = "asset")
     private AssetDisposal disposal;
     
-    public Asset() {}
+    public Asset() {
+        this.status = "ACTIVE";
+        this.createdAt = LocalDateTime.now();
+    }
     
     public Asset(String assetTag, String assetName, Vendor vendor, LocalDate purchaseDate,
                  Double purchaseCost, DepreciationRule depreciationRule) {
@@ -51,6 +54,7 @@ public class Asset {
         this.purchaseDate = purchaseDate;
         this.purchaseCost = purchaseCost;
         this.depreciationRule = depreciationRule;
+        this.status = "ACTIVE";
         this.createdAt = LocalDateTime.now();
     }
     

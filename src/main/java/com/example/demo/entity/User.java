@@ -1,4 +1,4 @@
-// User.java
+// User.java (Updated with all constructors)
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -34,7 +34,9 @@ public class User {
     @OneToMany(mappedBy = "approvedBy")
     private Set<AssetDisposal> disposals = new HashSet<>();
     
-    public User() {}
+    public User() {
+        this.createdAt = LocalDateTime.now();
+    }
     
     public User(String name, String email, String password, Set<Role> roles) {
         this.name = name;
