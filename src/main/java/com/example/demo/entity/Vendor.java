@@ -1,4 +1,3 @@
-// Vendor.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -8,7 +7,6 @@ import java.util.List;
 @Entity
 @Table(name = "vendors")
 public class Vendor {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,9 +15,7 @@ public class Vendor {
     private String vendorName;
     
     private String contactEmail;
-    
     private String phone;
-    
     private LocalDateTime createdAt;
     
     @OneToMany(mappedBy = "vendor")

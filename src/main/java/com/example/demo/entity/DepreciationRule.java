@@ -1,4 +1,3 @@
-// DepreciationRule.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -8,7 +7,6 @@ import java.util.List;
 @Entity
 @Table(name = "depreciation_rules")
 public class DepreciationRule {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,11 +15,8 @@ public class DepreciationRule {
     private String ruleName;
     
     private String method;
-    
     private Integer usefulLifeYears;
-    
     private Double salvageValue;
-    
     private LocalDateTime createdAt;
     
     @OneToMany(mappedBy = "depreciationRule")

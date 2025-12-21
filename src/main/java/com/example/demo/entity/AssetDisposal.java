@@ -1,4 +1,3 @@
-// AssetDisposal.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -8,7 +7,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "asset_disposals")
 public class AssetDisposal {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,9 +16,7 @@ public class AssetDisposal {
     private Asset asset;
     
     private String disposalMethod;
-    
     private Double disposalValue;
-    
     private LocalDate disposalDate;
     
     @ManyToOne
@@ -31,7 +27,7 @@ public class AssetDisposal {
     
     public AssetDisposal() {}
     
-    public AssetDisposal(Asset asset, String disposalMethod, Double disposalValue, 
+    public AssetDisposal(Asset asset, String disposalMethod, Double disposalValue,
                         LocalDate disposalDate, User approvedBy) {
         this.asset = asset;
         this.disposalMethod = disposalMethod;

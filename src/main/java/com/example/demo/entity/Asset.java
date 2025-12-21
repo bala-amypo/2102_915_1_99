@@ -1,4 +1,3 @@
-// Asset.java (Updated with default status)
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -9,7 +8,6 @@ import java.util.List;
 @Entity
 @Table(name = "assets")
 public class Asset {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +22,6 @@ public class Asset {
     private Vendor vendor;
     
     private LocalDate purchaseDate;
-    
     private Double purchaseCost;
     
     @ManyToOne
@@ -32,7 +29,6 @@ public class Asset {
     private DepreciationRule depreciationRule;
     
     private String status;
-    
     private LocalDateTime createdAt;
     
     @OneToMany(mappedBy = "asset")

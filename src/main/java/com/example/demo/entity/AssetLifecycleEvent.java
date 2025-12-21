@@ -1,4 +1,3 @@
-// AssetLifecycleEvent.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -8,7 +7,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "asset_lifecycle_events")
 public class AssetLifecycleEvent {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,11 +16,8 @@ public class AssetLifecycleEvent {
     private Asset asset;
     
     private String eventType;
-    
     private String eventDescription;
-    
     private LocalDate eventDate;
-    
     private LocalDateTime loggedAt;
     
     public AssetLifecycleEvent() {}
