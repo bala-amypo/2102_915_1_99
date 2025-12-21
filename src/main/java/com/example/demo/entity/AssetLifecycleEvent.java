@@ -22,7 +22,8 @@ public class AssetLifecycleEvent {
     
     public AssetLifecycleEvent() {}
     
-    public AssetLifecycleEvent(Asset asset, String eventType, String eventDescription, LocalDate eventDate) {
+    public AssetLifecycleEvent(Asset asset, String eventType, 
+                              String eventDescription, LocalDate eventDate) {
         this.asset = asset;
         this.eventType = eventType;
         this.eventDescription = eventDescription;

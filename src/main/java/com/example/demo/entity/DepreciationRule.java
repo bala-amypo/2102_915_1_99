@@ -15,7 +15,7 @@ public class DepreciationRule {
     private String ruleName;
     
     private String method;
-    private Integer usefulLifeYears;
+    private Integer usefulLifeYears;  // CORRECT SPELLING
     private Double salvageValue;
     private LocalDateTime createdAt;
     
@@ -24,10 +24,11 @@ public class DepreciationRule {
     
     public DepreciationRule() {}
     
-    public DepreciationRule(String ruleName, String method, Integer usefulLifeYears, Double salvageValue) {
+    public DepreciationRule(String ruleName, String method, 
+                           Integer usefulLifeYears, Double salvageValue) {
         this.ruleName = ruleName;
         this.method = method;
-        this.usefulLifeYears = usefulLifeYears;
+        this.usefulLifeYears = usefulLifeYears;  // CORRECT SPELLING
         this.salvageValue = salvageValue;
         this.createdAt = LocalDateTime.now();
     }
@@ -42,8 +43,8 @@ public class DepreciationRule {
     public String getMethod() { return method; }
     public void setMethod(String method) { this.method = method; }
     
-    public Integer getUsefulLifeYears() { return usefulLifeYears; }
-    public void setUsefulLifeYears(Integer usefulLifeYears) { this.usefulLifeYears = usefulLifeYears; }
+    public Integer getUsefulLifeYears() { return usefulLifeYears; }  // CORRECT SPELLING
+    public void setUsefulLifeYears(Integer usefulLifeYears) { this.usefulLifeYears = usefulLifeYears; }  // CORRECT
     
     public Double getSalvageValue() { return salvageValue; }
     public void setSalvageValue(Double salvageValue) { this.salvageValue = salvageValue; }
