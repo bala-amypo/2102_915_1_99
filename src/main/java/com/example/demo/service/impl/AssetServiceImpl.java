@@ -1,4 +1,3 @@
-// AssetServiceImpl.java (Updated)
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
@@ -11,14 +10,12 @@ import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.AssetService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Transactional
 public class AssetServiceImpl implements AssetService {
-    
     private final AssetRepository assetRepository;
     private final VendorRepository vendorRepository;
     private final DepreciationRuleRepository ruleRepository;

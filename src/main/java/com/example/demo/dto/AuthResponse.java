@@ -1,4 +1,3 @@
-// AuthResponse.java
 package com.example.demo.dto;
 
 import java.util.Set;
