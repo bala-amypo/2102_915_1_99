@@ -41,3 +41,4 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
         return disposalRepository.save(disposal);
     }
 }
+ 
