@@ -1,10 +1,10 @@
-package com.example.demo.service;
+// package com.example.demo.service;
 
-import com.example.demo.entity.User;
+// import com.example.demo.entity.User;
 
-import java.util.Optional;
+// import java.util.Optional;
 
-public interface UserService {
-    Optional<User> findByEmail(String email);
-    Optional<User> findById(Long id);
-}
+// public interface UserService {
+//     Optional<User> findByEmail(String email);
+//     Optional<User> findById(Long id);
+// }

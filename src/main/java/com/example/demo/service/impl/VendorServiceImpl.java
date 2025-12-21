@@ -1,28 +1,46 @@
+// VendorServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Vendor;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
+@Transactional
 public class VendorServiceImpl implements VendorService {
-
-    private final VendorRepository repository;
-
-    public VendorServiceImpl(VendorRepository repository) {
-        this.repository = repository;
+    
+    private final VendorRepository vendorRepository;
+    private static final Pattern EMAIL_PATTERN = 
+        Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+    
+    public VendorServiceImpl(VendorRepository vendorRepository) {
+        this.vendorRepository = vendorRepository;
     }
-
+    
     @Override
-    public Vendor save(Vendor vendor) {
-        return repository.save(vendor);
+    public Vendor createVendor(Vendor vendor) {
+        vendorRepository.findByVendorName(vendor.getVendorName())
+            .ifPresent(v -> {
+                throw new IllegalArgumentException("Vendor name already exists");
+            });
+        
+        if (!EMAIL_PATTERN.matcher(vendor.getContactEmail()).matches()) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+        
+        vendor.setCreatedAt(LocalDateTime.now());
+        return vendorRepository.save(vendor);
     }
-
+    
     @Override
-    public List<Vendor> findAll() {
-        return repository.findAll();
+    public List<Vendor> getAllVendors() {
+        return vendorRepository.findAll();
     }
 }
