@@ -4,7 +4,6 @@ import com.example.demo.entity.Asset;
 import com.example.demo.service.AssetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -18,29 +17,28 @@ public class AssetController {
     }
 
     @PostMapping("/{vendorId}/{ruleId}")
-    public ResponseEntity<Asset> createAsset(
-            @PathVariable Long vendorId,
-            @PathVariable Long ruleId,
-            @RequestBody Asset asset) {
-
+    public ResponseEntity<Asset> createAsset(@PathVariable Long vendorId, 
+                                           @PathVariable Long ruleId, 
+                                           @RequestBody Asset asset) {
         Asset created = assetService.createAsset(vendorId, ruleId, asset);
         return ResponseEntity.ok(created);
     }
 
     @GetMapping
     public ResponseEntity<List<Asset>> getAllAssets() {
-        return ResponseEntity.ok(assetService.getAllAssets());
+        List<Asset> assets = assetService.getAllAssets();
+        return ResponseEntity.ok(assets);
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Asset>> getAssetsByStatus(
-            @PathVariable String status) {
-
-        return ResponseEntity.ok(assetService.getAssetsByStatus(status));
+    public ResponseEntity<List<Asset>> getAssetsByStatus(@PathVariable String status) {
+        List<Asset> assets = assetService.getAssetsByStatus(status);
+        return ResponseEntity.ok(assets);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Asset> getAssetById(@PathVariable Long id) {
-        return ResponseEntity.ok(assetService.getAsset(id));
+    public ResponseEntity<Asset> getAsset(@PathVariable Long id) {
+        Asset asset = assetService.getAsset(id);
+        return ResponseEntity.ok(asset);
     }
 }

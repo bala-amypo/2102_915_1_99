@@ -16,22 +16,16 @@ public class AssetDisposalController {
     }
 
     @PostMapping("/request/{assetId}")
-    public ResponseEntity<AssetDisposal> requestDisposal(
-            @PathVariable Long assetId,
-            @RequestBody AssetDisposal disposal) {
-
-        return ResponseEntity.ok(
-                disposalService.requestDisposal(assetId, disposal)
-        );
+    public ResponseEntity<AssetDisposal> requestDisposal(@PathVariable Long assetId, 
+                                                        @RequestBody AssetDisposal disposal) {
+        AssetDisposal created = disposalService.requestDisposal(assetId, disposal);
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/approve/{disposalId}/{adminId}")
-    public ResponseEntity<AssetDisposal> approveDisposal(
-            @PathVariable Long disposalId,
-            @PathVariable Long adminId) {
-
-        return ResponseEntity.ok(
-                disposalService.approveDisposal(disposalId, adminId)
-        );
+    public ResponseEntity<AssetDisposal> approveDisposal(@PathVariable Long disposalId, 
+                                                        @PathVariable Long adminId) {
+        AssetDisposal approved = disposalService.approveDisposal(disposalId, adminId);
+        return ResponseEntity.ok(approved);
     }
 }
