@@ -1,7 +1,9 @@
+// VendorController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.Vendor;
-import com.example.demo.repository.VendorRepository;
+import com.example.demo.service.VendorService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,20 +11,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/vendors")
 public class VendorController {
-
-    private final VendorRepository vendorRepository;
-
-    public VendorController(VendorRepository vendorRepository) {
-        this.vendorRepository = vendorRepository;
+    
+    private final VendorService vendorService;
+    
+    public VendorController(VendorService vendorService) {
+        this.vendorService = vendorService;
     }
-
+    
     @PostMapping
-    public Vendor create(@RequestBody Vendor vendor) {
-        return vendorRepository.save(vendor);
+    public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
+        Vendor created = vendorService.createVendor(vendor);
+        return ResponseEntity.ok(created);
     }
-
+    
     @GetMapping
-    public List<Vendor> getAll() {
-        return vendorRepository.findAll();
+    public ResponseEntity<List<Vendor>> getAllVendors() {
+        List<Vendor> vendors = vendorService.getAllVendors();
+        return ResponseEntity.ok(vendors);
     }
 }

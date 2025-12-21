@@ -1,52 +1,34 @@
+// AssetDisposalController.java
 package com.example.demo.controller;
 
-import com.example.demo.entity.Asset;
 import com.example.demo.entity.AssetDisposal;
-import com.example.demo.entity.User;
-import com.example.demo.repository.AssetDisposalRepository;
-import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.AssetDisposalService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/disposals")
 public class AssetDisposalController {
-
-    private final AssetDisposalRepository disposalRepository;
-    private final AssetRepository assetRepository;
-    private final UserRepository userRepository;
-
-    public AssetDisposalController(AssetDisposalRepository disposalRepository,
-                                   AssetRepository assetRepository,
-                                   UserRepository userRepository) {
-        this.disposalRepository = disposalRepository;
-        this.assetRepository = assetRepository;
-        this.userRepository = userRepository;
+    
+    private final AssetDisposalService disposalService;
+    
+    public AssetDisposalController(AssetDisposalService disposalService) {
+        this.disposalService = disposalService;
     }
-
+    
     @PostMapping("/request/{assetId}")
-    public AssetDisposal request(@PathVariable Long assetId,
-                                 @RequestBody AssetDisposal disposal) {
-
-        Asset asset = assetRepository.findById(assetId).orElseThrow();
-        disposal.setAsset(asset);
-        disposal.setCreatedAt(LocalDateTime.now());
-
-        return disposalRepository.save(disposal);
+    public ResponseEntity<AssetDisposal> requestDisposal(
+            @PathVariable Long assetId,
+            @RequestBody AssetDisposal disposal) {
+        AssetDisposal created = disposalService.requestDisposal(assetId, disposal);
+        return ResponseEntity.ok(created);
     }
-
+    
     @PutMapping("/approve/{disposalId}/{adminId}")
-    public AssetDisposal approve(@PathVariable Long disposalId,
-                                 @PathVariable Long adminId) {
-
-        AssetDisposal disposal = disposalRepository.findById(disposalId).orElseThrow();
-        User admin = userRepository.findById(adminId).orElseThrow();
-
-        disposal.setApprovedBy(admin);
-        disposal.getAsset().setStatus("DISPOSED");
-
-        return disposalRepository.save(disposal);
+    public ResponseEntity<AssetDisposal> approveDisposal(
+            @PathVariable Long disposalId,
+            @PathVariable Long adminId) {
+        AssetDisposal approved = disposalService.approveDisposal(disposalId, adminId);
+        return ResponseEntity.ok(approved);
     }
 }

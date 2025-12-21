@@ -1,11 +1,9 @@
+// AssetController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.Asset;
-import com.example.demo.entity.DepreciationRule;
-import com.example.demo.entity.Vendor;
-import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.DepreciationRuleRepository;
-import com.example.demo.repository.VendorRepository;
+import com.example.demo.service.AssetService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,46 +11,37 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/assets")
 public class AssetController {
-
-    private final AssetRepository assetRepository;
-    private final VendorRepository vendorRepository;
-    private final DepreciationRuleRepository ruleRepository;
-
-    public AssetController(AssetRepository assetRepository,
-                           VendorRepository vendorRepository,
-                           DepreciationRuleRepository ruleRepository) {
-        this.assetRepository = assetRepository;
-        this.vendorRepository = vendorRepository;
-        this.ruleRepository = ruleRepository;
+    
+    private final AssetService assetService;
+    
+    public AssetController(AssetService assetService) {
+        this.assetService = assetService;
     }
-
+    
     @PostMapping("/{vendorId}/{ruleId}")
-    public Asset create(@PathVariable Long vendorId,
-                        @PathVariable Long ruleId,
-                        @RequestBody Asset asset) {
-
-        Vendor vendor = vendorRepository.findById(vendorId).orElseThrow();
-        DepreciationRule rule = ruleRepository.findById(ruleId).orElseThrow();
-
-        asset.setStatus("ACTIVE");
-        asset.setVendor(vendor);
-        asset.setDepreciationRule(rule);
-
-        return assetRepository.save(asset);
+    public ResponseEntity<Asset> createAsset(
+            @PathVariable Long vendorId,
+            @PathVariable Long ruleId,
+            @RequestBody Asset asset) {
+        Asset created = assetService.createAsset(vendorId, ruleId, asset);
+        return ResponseEntity.ok(created);
     }
-
+    
     @GetMapping
-    public List<Asset> getAll() {
-        return assetRepository.findAll();
+    public ResponseEntity<List<Asset>> getAllAssets() {
+        List<Asset> assets = assetService.getAllAssets();
+        return ResponseEntity.ok(assets);
     }
-
-    @GetMapping("/{id}")
-    public Asset getById(@PathVariable Long id) {
-        return assetRepository.findById(id).orElseThrow();
-    }
-
+    
     @GetMapping("/status/{status}")
-    public List<Asset> byStatus(@PathVariable String status) {
-        return assetRepository.findByStatus(status);
+    public ResponseEntity<List<Asset>> getAssetsByStatus(@PathVariable String status) {
+        List<Asset> assets = assetService.getAssetsByStatus(status);
+        return ResponseEntity.ok(assets);
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Asset> getAssetById(@PathVariable Long id) {
+        Asset asset = assetService.getAsset(id);
+        return ResponseEntity.ok(asset);
     }
 }
