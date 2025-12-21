@@ -1,17 +1,14 @@
-// AssetController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.service.AssetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/assets")
 public class AssetController {
-    
     private final AssetService assetService;
     
     public AssetController(AssetService assetService) {
@@ -19,10 +16,9 @@ public class AssetController {
     }
     
     @PostMapping("/{vendorId}/{ruleId}")
-    public ResponseEntity<Asset> createAsset(
-            @PathVariable Long vendorId,
-            @PathVariable Long ruleId,
-            @RequestBody Asset asset) {
+    public ResponseEntity<Asset> createAsset(@PathVariable Long vendorId,
+                                           @PathVariable Long ruleId,
+                                           @RequestBody Asset asset) {
         Asset created = assetService.createAsset(vendorId, ruleId, asset);
         return ResponseEntity.ok(created);
     }

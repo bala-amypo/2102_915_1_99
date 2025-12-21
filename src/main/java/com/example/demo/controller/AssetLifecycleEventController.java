@@ -1,17 +1,14 @@
-// AssetLifecycleEventController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.AssetLifecycleEvent;
 import com.example.demo.service.AssetLifecycleEventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
 public class AssetLifecycleEventController {
-    
     private final AssetLifecycleEventService eventService;
     
     public AssetLifecycleEventController(AssetLifecycleEventService eventService) {
@@ -19,9 +16,8 @@ public class AssetLifecycleEventController {
     }
     
     @PostMapping("/{assetId}")
-    public ResponseEntity<AssetLifecycleEvent> logEvent(
-            @PathVariable Long assetId,
-            @RequestBody AssetLifecycleEvent event) {
+    public ResponseEntity<AssetLifecycleEvent> logEvent(@PathVariable Long assetId,
+                                                       @RequestBody AssetLifecycleEvent event) {
         AssetLifecycleEvent created = eventService.logEvent(assetId, event);
         return ResponseEntity.ok(created);
     }

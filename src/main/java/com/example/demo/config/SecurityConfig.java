@@ -1,4 +1,3 @@
-// SecurityConfig.java (Updated)
 package com.example.demo.config;
 
 import org.springframework.context.annotation.Bean;
@@ -8,6 +7,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,14 +16,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtFilter jwtFilter;
+    private final UserDetailsService userDetailsService;
     
     public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, 
-                         JwtFilter jwtFilter) {
+                         JwtFilter jwtFilter,
+                         UserDetailsService userDetailsService) {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtFilter = jwtFilter;
+        this.userDetailsService = userDetailsService;
     }
     
     @Bean
@@ -32,8 +34,7 @@ public class SecurityConfig {
     }
     
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authConfig) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
     
@@ -45,7 +46,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated());
         
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

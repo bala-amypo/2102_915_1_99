@@ -1,17 +1,14 @@
-// VendorController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.Vendor;
 import com.example.demo.service.VendorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendors")
 public class VendorController {
-    
     private final VendorService vendorService;
     
     public VendorController(VendorService vendorService) {
