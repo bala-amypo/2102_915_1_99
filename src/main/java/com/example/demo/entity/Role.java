@@ -10,6 +10,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
     public Role() {
@@ -17,10 +18,6 @@ public class Role {
 
     public Role(Long id, String name) {
         this.id = id;
-        this.name = name;
-    }
-
-    public Role(String name) {
         this.name = name;
     }
 
