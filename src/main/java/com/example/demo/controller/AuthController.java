@@ -5,19 +5,29 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.util.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil = new JwtUtil();
 
-    public AuthController(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
+    public AuthController() {
     }
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest request) {
-        String token = jwtUtil.generateToken(request.getEmail());
+        String token = jwtUtil.generateToken(
+                request.getUsername(),
+                1L,
+                Set.of("USER")
+        );
         return new AuthResponse(token);
+    }
+
+    @PostMapping("/register")
+    public String register(@RequestBody AuthRequest request) {
+        return "User registered";
     }
 }
