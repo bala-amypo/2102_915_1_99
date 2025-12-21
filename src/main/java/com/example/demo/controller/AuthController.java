@@ -60,3 +60,37 @@ public class AuthController {
             Authentication authentication =
                     authenticationManager.authenticate(
                             new UsernamePasswordAuthenticationToken(
+                                    authRequest.getEmail(),
+                                    authRequest.getPassword()
+                            )
+                    );
+
+            UserDetails userDetails =
+                    (UserDetails) authentication.getPrincipal();
+
+            User user = userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("User not found"));
+
+            Set<String> roles = new HashSet<>();
+            user.getRoles().forEach(r -> roles.add(r.getName()));
+
+            String token = jwtUtil.generateToken(
+                    user.getEmail(),
+                    user.getId(),
+                    roles
+            );
+
+            AuthResponse response = new AuthResponse();
+            response.setToken(token);
+            response.setUserId(user.getId());
+            response.setEmail(user.getEmail());
+            response.setRoles(roles);
+
+            return ResponseEntity.ok(response);
+
+        } catch (BadCredentialsException ex) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+    }
+}
