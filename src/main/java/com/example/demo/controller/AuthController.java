@@ -11,23 +11,19 @@ import java.util.Set;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final JwtUtil jwtUtil = new JwtUtil();
+    private final JwtUtil jwtUtil;
 
-    public AuthController() {
+    public AuthController(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
+    @PostMapping
+    public AuthResponse authenticate(@RequestBody AuthRequest request) {
         String token = jwtUtil.generateToken(
-                request.getUsername(),
+                request.getEmail(),
                 1L,
                 Set.of("USER")
         );
         return new AuthResponse(token);
-    }
-
-    @PostMapping("/register")
-    public String register(@RequestBody AuthRequest request) {
-        return "User registered";
     }
 }
