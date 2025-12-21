@@ -5,47 +5,52 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "vendors")
+@Table(
+        name = "vendors",
+        uniqueConstraints = @UniqueConstraint(columnNames = "vendorName")
+)
 public class Vendor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(unique = true)
+
+    @Column(nullable = false, unique = true)
     private String vendorName;
-    
+
     private String contactEmail;
+
     private String phone;
-    private LocalDateTime createdAt;
-    
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     @OneToMany(mappedBy = "vendor")
     private List<Asset> assets;
-    
-    public Vendor() {}
-    
+
+    public Vendor() {
+    }
+
     public Vendor(String vendorName, String contactEmail, String phone) {
         this.vendorName = vendorName;
         this.contactEmail = contactEmail;
         this.phone = phone;
-        this.createdAt = LocalDateTime.now();
     }
-    
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public String getVendorName() { return vendorName; }
-    public void setVendorName(String vendorName) { this.vendorName = vendorName; }
-    
-    public String getContactEmail() { return contactEmail; }
-    public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
-    
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    
-    public List<Asset> getAssets() { return assets; }
-    public void setAssets(List<Asset> assets) { this.assets = assets; }
+
+    // getters & setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
 }
