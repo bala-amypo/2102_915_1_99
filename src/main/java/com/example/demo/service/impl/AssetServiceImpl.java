@@ -9,10 +9,13 @@ import com.example.demo.repository.DepreciationRuleRepository;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.AssetService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
@@ -36,26 +39,22 @@ public class AssetServiceImpl implements AssetService {
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
 
         DepreciationRule rule = ruleRepository.findById(ruleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found"));
 
         if (asset.getPurchaseCost() == null || asset.getPurchaseCost() <= 0) {
-            throw new IllegalArgumentException("Invalid purchase cost");
+            throw new IllegalArgumentException("Purchase cost must be greater than 0");
         }
 
-        if (assetRepository.existsByAssetTag(asset.getAssetTag())) {
-            throw new IllegalArgumentException("Duplicate asset tag");
+        if (asset.getAssetTag() == null || assetRepository.existsByAssetTag(asset.getAssetTag())) {
+            throw new IllegalArgumentException("Asset tag already exists");
         }
 
         asset.setVendor(vendor);
         asset.setDepreciationRule(rule);
         asset.setStatus("ACTIVE");
+        asset.setCreatedAt(LocalDateTime.now());
 
         return assetRepository.save(asset);
-    }
-
-    @Override
-    public List<Asset> getAllAssets() {
-        return assetRepository.findAll();
     }
 
     @Override
@@ -64,9 +63,13 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    public List<Asset> getAllAssets() {
+        return assetRepository.findAll();
+    }
+
+    @Override
     public Asset getAsset(Long id) {
         return assetRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Asset not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
     }
 }
