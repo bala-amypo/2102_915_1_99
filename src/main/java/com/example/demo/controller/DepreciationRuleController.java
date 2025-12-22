@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/rules")
 public class DepreciationRuleController {
-
+    
     private final DepreciationRuleService depreciationRuleService;
-
+    
     public DepreciationRuleController(DepreciationRuleService depreciationRuleService) {
         this.depreciationRuleService = depreciationRuleService;
     }
-
+    
     @PostMapping
     public ResponseEntity<DepreciationRule> createRule(@RequestBody DepreciationRule rule) {
         DepreciationRule created = depreciationRuleService.createRule(rule);
