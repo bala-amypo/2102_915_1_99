@@ -1,31 +1,44 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Asset;
+import com.example.demo.service.AssetService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.entity.AssetDisposal;
-import com.example.demo.service.AssetDisposalService;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/disposals")
-public class AssetDisposalController {
+@RequestMapping("/api/assets")
+public class AssetController {
 
-    private final AssetDisposalService assetDisposalService;
+    private final AssetService assetService;
 
-    public AssetDisposalController(AssetDisposalService assetDisposalService) {
-        this.assetDisposalService = assetDisposalService;
+    public AssetController(AssetService assetService) {
+        this.assetService = assetService;
     }
 
-    @PostMapping("/request/{assetId}")
-    public AssetDisposal requestDisposal(
-            @PathVariable Long assetId,
-            @RequestBody AssetDisposal disposal) {
-        return assetDisposalService.requestDisposal(assetId, disposal);
+    @PostMapping("/{vendorId}/{ruleId}")
+    public ResponseEntity<Asset> createAsset(@PathVariable Long vendorId, 
+                                           @PathVariable Long ruleId, 
+                                           @RequestBody Asset asset) {
+        Asset created = assetService.createAsset(vendorId, ruleId, asset);
+        return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/approve/{disposalId}/{adminId}")
-    public AssetDisposal approveDisposal(
-            @PathVariable Long disposalId,
-            @PathVariable Long adminId) {
-        return assetDisposalService.approveDisposal(disposalId, adminId);
+    @GetMapping
+    public ResponseEntity<List<Asset>> getAllAssets() {
+        List<Asset> assets = assetService.getAllAssets();
+        return ResponseEntity.ok(assets);
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Asset>> getAssetsByStatus(@PathVariable String status) {
+        List<Asset> assets = assetService.getAssetsByStatus(status);
+        return ResponseEntity.ok(assets);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Asset> getAsset(@PathVariable Long id) {
+        Asset asset = assetService.getAsset(id);
+        return ResponseEntity.ok(asset);
     }
 }
