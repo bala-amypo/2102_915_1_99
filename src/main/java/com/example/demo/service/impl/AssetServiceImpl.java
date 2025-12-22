@@ -4,6 +4,7 @@ import com.example.demo.entity.Asset;
 import com.example.demo.entity.Vendor;
 import com.example.demo.entity.DepreciationRule;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.AssetRepository;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.repository.DepreciationRuleRepository;
@@ -14,55 +15,55 @@ import java.util.List;
 
 @Service
 public class AssetServiceImpl implements AssetService {
-
+    
     private final AssetRepository assetRepository;
     private final VendorRepository vendorRepository;
     private final DepreciationRuleRepository depreciationRuleRepository;
-
+    
     public AssetServiceImpl(AssetRepository assetRepository, VendorRepository vendorRepository, 
                            DepreciationRuleRepository depreciationRuleRepository) {
         this.assetRepository = assetRepository;
         this.vendorRepository = vendorRepository;
         this.depreciationRuleRepository = depreciationRuleRepository;
     }
-
+    
     @Override
     public Asset createAsset(Long vendorId, Long ruleId, Asset asset) {
         Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
         
         DepreciationRule rule = depreciationRuleRepository.findById(ruleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found"));
-
+            .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found"));
+        
         if (asset.getPurchaseCost() <= 0) {
-            throw new IllegalArgumentException("Purchase cost must be greater than 0");
+            throw new BadRequestException("Purchase cost must be greater than 0");
         }
-
+        
         if (assetRepository.existsByAssetTag(asset.getAssetTag())) {
-            throw new IllegalArgumentException("Asset tag already exists");
+            throw new BadRequestException("Asset tag already exists");
         }
-
+        
         asset.setVendor(vendor);
         asset.setDepreciationRule(rule);
         asset.setStatus("ACTIVE");
         asset.setCreatedAt(LocalDateTime.now());
-
+        
         return assetRepository.save(asset);
     }
-
+    
     @Override
     public List<Asset> getAssetsByStatus(String status) {
         return assetRepository.findByStatus(status);
     }
-
+    
     @Override
     public List<Asset> getAllAssets() {
         return assetRepository.findAll();
     }
-
+    
     @Override
     public Asset getAsset(Long id) {
         return assetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
     }
 }
