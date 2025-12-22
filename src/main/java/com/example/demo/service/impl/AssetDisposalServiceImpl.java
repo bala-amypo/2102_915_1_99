@@ -5,10 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.entity.AssetDisposal;
-import com.example.demo.entity.User;
 import com.example.demo.repository.AssetDisposalRepository;
 import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AssetDisposalService;
 
 @Service
@@ -19,9 +17,6 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
 
     @Autowired
     private AssetRepository assetRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Override
     public AssetDisposal requestDisposal(Long assetId, AssetDisposal disposal) {
@@ -40,15 +35,10 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
         AssetDisposal disposal = disposalRepository.findById(disposalId)
                 .orElseThrow(() -> new RuntimeException("Disposal not found"));
 
-        User admin = userRepository.findById(adminId)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
-
         Asset asset = disposal.getAsset();
 
         asset.setStatus("DISPOSED");
         assetRepository.save(asset);
-
-        disposal.setApprovedBy(admin);
 
         return disposalRepository.save(disposal);
     }
