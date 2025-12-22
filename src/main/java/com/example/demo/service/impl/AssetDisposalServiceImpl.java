@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Asset;
@@ -16,19 +15,23 @@ import com.example.demo.service.AssetDisposalService;
 @Service
 public class AssetDisposalServiceImpl implements AssetDisposalService {
 
-    @Autowired
-    private AssetDisposalRepository disposalRepository;
+    private final AssetDisposalRepository disposalRepository;
+    private final AssetRepository assetRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private AssetRepository assetRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    public AssetDisposalServiceImpl(
+            AssetDisposalRepository disposalRepository,
+            AssetRepository assetRepository,
+            UserRepository userRepository) {
+        this.disposalRepository = disposalRepository;
+        this.assetRepository = assetRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public AssetDisposal requestDisposal(Long assetId, AssetDisposal disposal) {
-        Asset asset = assetRepository.findById(assetId)
-                .orElseThrow(() -> new RuntimeException("Asset not found"));
+
+        Asset asset = assetRepository.findById(assetId).orElseThrow();
 
         disposal.setAsset(asset);
         disposal.setCreatedAt(LocalDateTime.now());
@@ -38,11 +41,9 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
 
     @Override
     public AssetDisposal approveDisposal(Long disposalId, Long adminId) {
-        AssetDisposal disposal = disposalRepository.findById(disposalId)
-                .orElseThrow(() -> new RuntimeException("Disposal not found"));
 
-        User admin = userRepository.findAll().stream().findFirst()
-                .orElseThrow(() -> new RuntimeException("No users found"));
+        AssetDisposal disposal = disposalRepository.findById(disposalId).orElseThrow();
+        User admin = userRepository.findById(adminId).orElseThrow();
 
         disposal.setApprovedBy(admin);
 

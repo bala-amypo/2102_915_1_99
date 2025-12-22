@@ -1,9 +1,9 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 @Entity
 public class AssetDisposal {
@@ -12,42 +12,74 @@ public class AssetDisposal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(optional = false)
+    @JoinColumn(name = "asset_id", nullable = false)
+    private Asset asset;
+
     private String disposalMethod;
-    private double disposalValue;
+
+    private Double disposalValue;
+
     private LocalDate disposalDate;
+
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
 
     private LocalDateTime createdAt;
 
-    @OneToOne
-    @JoinColumn(name = "asset_id")
-    @JsonIgnore
-    private Asset asset;
-
-    @ManyToOne
-    private User approvedBy;
-
     public AssetDisposal() {
-        this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getDisposalMethod() { return disposalMethod; }
-    public void setDisposalMethod(String disposalMethod) { this.disposalMethod = disposalMethod; }
+    public Asset getAsset() {
+        return asset;
+    }
 
-    public double getDisposalValue() { return disposalValue; }
-    public void setDisposalValue(double disposalValue) { this.disposalValue = disposalValue; }
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
 
-    public LocalDate getDisposalDate() { return disposalDate; }
-    public void setDisposalDate(LocalDate disposalDate) { this.disposalDate = disposalDate; }
+    public String getDisposalMethod() {
+        return disposalMethod;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setDisposalMethod(String disposalMethod) {
+        this.disposalMethod = disposalMethod;
+    }
 
-    public Asset getAsset() { return asset; }
-    public void setAsset(Asset asset) { this.asset = asset; }
+    public Double getDisposalValue() {
+        return disposalValue;
+    }
 
-    public User getApprovedBy() { return approvedBy; }
-    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
+    public void setDisposalValue(Double disposalValue) {
+        this.disposalValue = disposalValue;
+    }
+
+    public LocalDate getDisposalDate() {
+        return disposalDate;
+    }
+
+    public void setDisposalDate(LocalDate disposalDate) {
+        this.disposalDate = disposalDate;
+    }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(User approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

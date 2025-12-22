@@ -1,44 +1,31 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Asset;
-import com.example.demo.service.AssetService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
+import com.example.demo.entity.AssetDisposal;
+import com.example.demo.service.AssetDisposalService;
 
 @RestController
-@RequestMapping("/api/assets")
-public class AssetController {
+@RequestMapping("/api/disposals")
+public class AssetDisposalController {
 
-    private final AssetService assetService;
+    private final AssetDisposalService assetDisposalService;
 
-    public AssetController(AssetService assetService) {
-        this.assetService = assetService;
+    public AssetDisposalController(AssetDisposalService assetDisposalService) {
+        this.assetDisposalService = assetDisposalService;
     }
 
-    @PostMapping("/{vendorId}/{ruleId}")
-    public ResponseEntity<Asset> createAsset(@PathVariable Long vendorId, 
-                                           @PathVariable Long ruleId, 
-                                           @RequestBody Asset asset) {
-        Asset created = assetService.createAsset(vendorId, ruleId, asset);
-        return ResponseEntity.ok(created);
+    @PostMapping("/request/{assetId}")
+    public AssetDisposal requestDisposal(
+            @PathVariable Long assetId,
+            @RequestBody AssetDisposal disposal) {
+        return assetDisposalService.requestDisposal(assetId, disposal);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Asset>> getAllAssets() {
-        List<Asset> assets = assetService.getAllAssets();
-        return ResponseEntity.ok(assets);
-    }
-
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<Asset>> getAssetsByStatus(@PathVariable String status) {
-        List<Asset> assets = assetService.getAssetsByStatus(status);
-        return ResponseEntity.ok(assets);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Asset> getAsset(@PathVariable Long id) {
-        Asset asset = assetService.getAsset(id);
-        return ResponseEntity.ok(asset);
+    @PutMapping("/approve/{disposalId}/{adminId}")
+    public AssetDisposal approveDisposal(
+            @PathVariable Long disposalId,
+            @PathVariable Long adminId) {
+        return assetDisposalService.approveDisposal(disposalId, adminId);
     }
 }
