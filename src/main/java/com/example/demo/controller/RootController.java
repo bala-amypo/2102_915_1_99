@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RootController {
-    
+
     @GetMapping("/")
-    public String root() {
-        return "Asset Lifecycle Tracking API is running";
+    public String home() {
+        return "OK";
     }
 }
