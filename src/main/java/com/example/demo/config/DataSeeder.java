@@ -5,68 +5,57 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Configuration
-public class DataSeeder implements CommandLineRunner {
+public class DataSeeder {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public DataSeeder(
-            UserRepository userRepository,
+    @Bean
+    CommandLineRunner seedData(
             RoleRepository roleRepository,
+            UserRepository userRepository,
             PasswordEncoder passwordEncoder
     ) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+        return args -> {
 
-    @Override
-    public void run(String... args) {
+            if (roleRepository.count() == 0) {
+                Role adminRole = new Role("ADMIN");
+                Role userRole = new Role("USER");
 
-        Role adminRole = roleRepository.findByName("ADMIN")
-                .orElseGet(() -> {
-                    Role role = new Role();
-                    role.setName("ADMIN");
-                    return roleRepository.save(role);
-                });
+                roleRepository.save(adminRole);
+                roleRepository.save(userRole);
+            }
 
-        Role userRole = roleRepository.findByName("USER")
-                .orElseGet(() -> {
-                    Role role = new Role();
-                    role.setName("USER");
-                    return roleRepository.save(role);
-                });
+            Role adminRole = roleRepository.findByName("ADMIN").orElseThrow();
+            Role userRole = roleRepository.findByName("USER").orElseThrow();
 
-        Optional<User> adminOpt = userRepository.findByEmail("admin@example.com");
-        if (adminOpt.isEmpty()) {
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setEmail("admin@example.com");
-            admin.setName("Admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRole(adminRole);
-            admin.setCreatedAt(LocalDateTime.now());
-            userRepository.save(admin);
-        }
+            if (userRepository.count() == 0) {
 
-        Optional<User> userOpt = userRepository.findByEmail("user@example.com");
-        if (userOpt.isEmpty()) {
-            User user = new User();
-            user.setUsername("user");
-            user.setEmail("user@example.com");
-            user.setName("User");
-            user.setPassword(passwordEncoder.encode("user123"));
-            user.setRole(userRole);
-            user.setCreatedAt(LocalDateTime.now());
-            userRepository.save(user);
-        }
+                User admin = new User(
+                        "Admin",
+                        "admin",
+                        "admin@example.com",
+                        passwordEncoder.encode("admin123"),
+                        adminRole
+                );
+                admin.setCreatedAt(LocalDateTime.now());
+
+                User user = new User(
+                        "User",
+                        "user",
+                        "user@example.com",
+                        passwordEncoder.encode("user123"),
+                        userRole
+                );
+                user.setCreatedAt(LocalDateTime.now());
+
+                userRepository.save(admin);
+                userRepository.save(user);
+            }
+        };
     }
 }

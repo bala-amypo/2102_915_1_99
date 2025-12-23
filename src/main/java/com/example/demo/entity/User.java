@@ -2,7 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,22 +25,25 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String name, String username, String email, String password, Role role) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.role = role;
-        this.createdAt = LocalDateTime.now();
+        this.roles.add(role);
     }
 
     public Long getId() {
@@ -63,24 +66,35 @@ public class User {
         return password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    //  PORTAL EXPECTS THIS EXACT METHOD
-    public Set<Role> getRoles() {
-        return role == null ? Collections.emptySet() : Set.of(role);
     }
 }
