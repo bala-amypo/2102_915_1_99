@@ -34,4 +34,17 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
 
         return disposalRepository.save(disposal);
     }
+
+    @Override
+    public AssetDisposal approveDisposal(Long disposalId, Long adminId) {
+
+        AssetDisposal disposal = disposalRepository.findById(disposalId)
+                .orElseThrow(() -> new NoSuchElementException("Disposal not found"));
+
+        disposal.setApprovedBy(adminId);
+        disposal.setApprovedAt(LocalDateTime.now());
+        disposal.setStatus("APPROVED");
+
+        return disposalRepository.save(disposal);
+    }
 }

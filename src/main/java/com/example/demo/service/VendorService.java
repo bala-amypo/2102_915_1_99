@@ -7,5 +7,9 @@ public interface VendorService {
 
     Vendor createVendor(Vendor vendor);
 
+    Vendor getVendorById(Long id);
+
     List<Vendor> getAllVendors();
+
+    void deleteVendor(Long id);
 }
