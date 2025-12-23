@@ -1,4 +1,48 @@
-package com.example.demo.controller;
+
+Explorer
+Workspace
+demo
+.mvn
+src/main
+java/com/example/demo
+config
+controller
+AssetController.java
+AssetDisposalController.java
+AssetLifecycleEventController.java
+AuthController.java
+DepreciationRuleController.java
+RootController.java
+VendorController.java
+dto
+entity
+exception
+repository
+service
+util
+DemoApplication.java
+TestResultListener.java
+resources
+target
+.gitattributes
+.gitignore
+mvnw
+mvnw.cmd
+pom.xml
+Outline
+Timeline
+AssetController.java
+demo
+src
+main
+java
+com
+example
+demo
+controller
+AssetController.java
+123456789101112131415161718192021222324252627282930
+package com.example.demo.controller;import com.example.demo.entity.Asset;import com.example.demo.service.AssetService;import org.springframework.http.ResponseEntity;import org.springframework.web.bind.annotation.*;import java.util.List;@RestContpackage com.example.demo.controller;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.service.AssetService;
