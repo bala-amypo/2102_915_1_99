@@ -33,10 +33,13 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public User() {
-    }
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    public User() {}
 
     public User(String name, String username, String email, String password, Role role) {
         this.name = name;
@@ -46,55 +49,37 @@ public class User {
         this.roles.add(role);
     }
 
-    public Long getId() {
-        return id;
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-    public String getName() {
-        return name;
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
-    public String getUsername() {
-        return username;
-    }
+    public Long getId() { return id; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public Set<Role> getRoles() { return roles; }
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
