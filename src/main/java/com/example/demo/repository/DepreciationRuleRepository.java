@@ -7,5 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface DepreciationRuleRepository extends JpaRepository<DepreciationRule, Long> {
-    Optional<DepreciationRule> findByRuleName(String ruleName);
+    Optional<DepreciationRule> findByRuleNameIgnoreCase(String ruleName);
+    boolean existsByRuleNameIgnoreCase(String ruleName);
 }

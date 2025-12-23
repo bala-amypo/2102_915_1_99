@@ -13,15 +13,38 @@ public class DepreciationRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String ruleName;
+
+    @Column(nullable = false)
     private String method;
+
+    @Column(nullable = false)
     private int usefulLifeYears;
+
+    @Column(nullable = false)
     private double salvageValue;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "depreciationRule", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "rule-assets")
     private List<Asset> assets;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public DepreciationRule() {}
 
@@ -40,13 +63,4 @@ public class DepreciationRule {
     }
 
     public double getSalvageValue() { return salvageValue; }
-    public void setSalvageValue(double salvageValue) {
-        this.salvageValue = salvageValue;
-    }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public List<Asset> getAssets() { return assets; }
-    public void setAssets(List<Asset> assets) { this.assets = assets; }
-}
+    public void setSalvageValue(double
