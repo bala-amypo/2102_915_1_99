@@ -29,17 +29,16 @@ public class Vendor {
     private List<Asset> assets;
 
     public Vendor() {
-    }
-
-    public Vendor(String vendorName, String contactEmail, String phone) {
-        this.vendorName = vendorName;
-        this.contactEmail = contactEmail;
-        this.phone = phone;
         this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
         return id;
+    }
+
+    //  THIS IS THE MISSING PIECE
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getVendorName() {
