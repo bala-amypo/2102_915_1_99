@@ -1,37 +1,27 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Vendor;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.VendorRepository;
+import com.example.demo.service.VendorService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendors")
 public class VendorController {
 
-    private final VendorRepository vendorRepository;
+    private final VendorService vendorService;
 
-    public VendorController(VendorRepository vendorRepository) {
-        this.vendorRepository = vendorRepository;
+    public VendorController(VendorService vendorService) {
+        this.vendorService = vendorService;
     }
 
     @PostMapping
-    public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
-        return ResponseEntity.ok(vendorRepository.save(vendor));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Vendor>> getAllVendors() {
-        return ResponseEntity.ok(vendorRepository.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Vendor> getVendorById(@PathVariable Long id) {
-        Vendor vendor = vendorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
-        return ResponseEntity.ok(vendor);
+    public ResponseEntity<?> createVendor(@RequestBody Vendor vendor) {
+        try {
+            return new ResponseEntity<>(vendorService.createVendor(vendor), HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 }
