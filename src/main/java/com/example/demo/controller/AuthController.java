@@ -44,18 +44,20 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> request) {
 
-        String username = request.get("username");
+        String email = request.get("email");
         String password = request.get("password");
+        String name = request.get("name");
 
-        if (userRepository.findByUsername(username).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
+        if (userRepository.findByEmail(email).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Email already exists"));
         }
 
         Role userRole = roleRepository.findByName("ROLE_USER")
                 .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
 
         User user = new User();
-        user.setUsername(username);
+        user.setEmail(email);
+        user.setName(name);
         user.setPassword(passwordEncoder.encode(password));
         user.getRoles().add(userRole);
 
@@ -63,7 +65,8 @@ public class AuthController {
 
         return ResponseEntity.ok(Map.of(
                 "id", saved.getId(),
-                "username", saved.getUsername()
+                "email", saved.getEmail(),
+                "name", saved.getName()
         ));
     }
 
@@ -72,15 +75,15 @@ public class AuthController {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        request.getEmail(),
                         request.getPassword()
                 )
         );
 
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
         Set<String> roles = new HashSet<>();
-        user.getRoles().forEach(role -> roles.add(role.getName()));
+        user.getRoles().forEach(r -> roles.add(r.getName()));
 
         String token = jwtUtil.generateToken(
                 user.getUsername(),
@@ -92,7 +95,7 @@ public class AuthController {
                 new AuthResponse(
                         token,
                         user.getId(),
-                        user.getUsername(),
+                        user.getEmail(),
                         roles
                 )
         );
