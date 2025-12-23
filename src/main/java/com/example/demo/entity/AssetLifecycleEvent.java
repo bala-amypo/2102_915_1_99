@@ -13,15 +13,36 @@ public class AssetLifecycleEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String eventType;
+
+    @Column(nullable = false)
     private String eventDescription;
+
+    @Column(nullable = false)
     private LocalDate eventDate;
+
+    @Column(nullable = false)
     private LocalDateTime loggedAt;
 
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
     @ManyToOne
-    @JoinColumn(name = "asset_id")
+    @JoinColumn(name = "asset_id", nullable = false)
     @JsonBackReference(value = "asset-events")
     private Asset asset;
+
+    @PrePersist
+    public void prePersist() {
+        loggedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public AssetLifecycleEvent() {}
 
@@ -41,6 +62,9 @@ public class AssetLifecycleEvent {
 
     public LocalDateTime getLoggedAt() { return loggedAt; }
     public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public Asset getAsset() { return asset; }
     public void setAsset(Asset asset) { this.asset = asset; }
