@@ -4,12 +4,11 @@ import com.example.demo.entity.Vendor;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
-@Transactional
 public class VendorServiceImpl implements VendorService {
 
     private final VendorRepository vendorRepository;
@@ -26,5 +25,10 @@ public class VendorServiceImpl implements VendorService {
 
         vendor.setCreatedAt(LocalDateTime.now());
         return vendorRepository.save(vendor);
+    }
+
+    @Override
+    public List<Vendor> getAllVendors() {
+        return vendorRepository.findAll();
     }
 }
