@@ -1,48 +1,38 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
+    @Autowired
+    private UserRepository userRepository;
 
-    public AuthController(
-            AuthenticationManager authenticationManager,
-            UserRepository userRepository,
-            JwtUtil jwtUtil
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
-    }
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(
+            @RequestParam String email,
+            @RequestParam String password
+    ) {
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        User user = userRepository.findByEmail(email)
+                .orElseThrow();
 
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-
-        Set<String> roles = Set.of(user.getRole().getName());
+        Set<String> roles = user.getRoles()
+                .stream()
+                .map(r -> r.getName())
+                .collect(Collectors.toSet());
 
         String token = jwtUtil.generateToken(
                 user.getEmail(),
@@ -50,13 +40,6 @@ public class AuthController {
                 roles
         );
 
-        return ResponseEntity.ok(
-                new AuthResponse(
-                        token,
-                        user.getId(),
-                        user.getEmail(),
-                        roles
-                )
-        );
+        return ResponseEntity.ok(token);
     }
 }
