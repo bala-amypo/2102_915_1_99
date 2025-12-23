@@ -2,8 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.service.AssetService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,20 +13,38 @@ import java.util.List;
 @RequestMapping("/api/assets")
 public class AssetController {
 
-    @Autowired
-    private AssetService assetService;
+    private final AssetService assetService;
+
+    public AssetController(AssetService assetService) {
+        this.assetService = assetService;
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<?> createAsset(@RequestBody Asset asset) {
+        try {
+            Asset created = assetService.createAsset(asset);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<Asset>> getAll() {
         return ResponseEntity.ok(assetService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Asset>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(List.of(assetService.getById(id)));
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<Asset> getById(@PathVariable Long id) {
+        Asset asset = assetService.getById(id);
+        return ResponseEntity.ok(asset);
     }
 
     @GetMapping("/status/{status}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<Asset>> getByStatus(@PathVariable String status) {
         return ResponseEntity.ok(assetService.getByStatus(status));
     }
