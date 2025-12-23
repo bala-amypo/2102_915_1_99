@@ -7,5 +7,6 @@ import java.util.List;
 
 @Repository
 public interface AssetLifecycleEventRepository extends JpaRepository<AssetLifecycleEvent, Long> {
-    List<AssetLifecycleEvent> findByAssetIdOrderByEventDateDesc(Long assetId);
+    // Order events by when they were logged, most recent first
+    List<AssetLifecycleEvent> findByAssetIdOrderByLoggedAtDesc(Long assetId);
 }
