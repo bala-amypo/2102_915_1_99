@@ -2,67 +2,36 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.entity.AssetDisposal;
-import com.example.demo.entity.User;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.AssetDisposalRepository;
 import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AssetDisposalService;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 @Service
 public class AssetDisposalServiceImpl implements AssetDisposalService {
-    
-    private final AssetDisposalRepository disposalRepository;
+
     private final AssetRepository assetRepository;
-    private final UserRepository userRepository;
-    
-    public AssetDisposalServiceImpl(AssetDisposalRepository disposalRepository, 
-                                  AssetRepository assetRepository, 
-                                  UserRepository userRepository) {
-        this.disposalRepository = disposalRepository;
+    private final AssetDisposalRepository disposalRepository;
+
+    public AssetDisposalServiceImpl(AssetRepository assetRepository,
+                                    AssetDisposalRepository disposalRepository) {
         this.assetRepository = assetRepository;
-        this.userRepository = userRepository;
+        this.disposalRepository = disposalRepository;
     }
-    
+
     @Override
     public AssetDisposal requestDisposal(Long assetId, AssetDisposal disposal) {
+
         Asset asset = assetRepository.findById(assetId)
-            .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
-        
-        if (disposal.getDisposalValue() < 0) {
-            throw new BadRequestException("Disposal value must be greater than or equal to 0");
-        }
-        
+                .orElseThrow(() -> new NoSuchElementException("Asset not found"));
+
         disposal.setAsset(asset);
-        disposal.setCreatedAt(LocalDateTime.now());
-        
-        return disposalRepository.save(disposal);
-    }
-    
-    @Override
-    public AssetDisposal approveDisposal(Long disposalId, Long adminId) {
-        AssetDisposal disposal = disposalRepository.findById(disposalId)
-            .orElseThrow(() -> new ResourceNotFoundException("Disposal not found"));
-        
-        User admin = userRepository.findById(adminId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
-        boolean isAdmin = admin.getRoles().stream()
-            .anyMatch(role -> "ADMIN".equals(role.getName()));
-        
-        if (!isAdmin) {
-            throw new BadRequestException("Only admins can approve disposals");
-        }
-        
-        disposal.setApprovedBy(admin);
-        
-        Asset asset = disposal.getAsset();
-        asset.setStatus("DISPOSED");
-        assetRepository.save(asset);
-        
+        disposal.setRequestedAt(LocalDateTime.now());
+        disposal.setStatus("REQUESTED");
+
         return disposalRepository.save(disposal);
     }
 }
