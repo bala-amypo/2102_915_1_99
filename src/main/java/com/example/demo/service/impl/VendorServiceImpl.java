@@ -20,17 +20,21 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor createVendor(Vendor vendor) {
-        if (vendorRepository.existsByVendorName(vendor.getVendorName())) {
-            throw new IllegalArgumentException("Vendor already exists");
+        // Normalize name for case-insensitive uniqueness
+        String normalizedName = vendor.getVendorName().trim().toLowerCase();
+        if (vendorRepository.existsByVendorNameIgnoreCase(normalizedName)) {
+            throw new IllegalArgumentException("Vendor with name '" + vendor.getVendorName() + "' already exists");
         }
+        vendor.setVendorName(normalizedName);
         vendor.setCreatedAt(LocalDateTime.now());
+        vendor.setUpdatedAt(LocalDateTime.now());
         return vendorRepository.save(vendor);
     }
 
     @Override
     public Vendor getVendorById(Long id) {
         return vendorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Vendor not found"));
+                .orElseThrow(() -> new NoSuchElementException("Vendor not found with id " + id));
     }
 
     @Override
@@ -41,7 +45,7 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public void deleteVendor(Long id) {
         Vendor vendor = vendorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Vendor not found"));
+                .orElseThrow(() -> new NoSuchElementException("Vendor not found with id " + id));
         vendorRepository.delete(vendor);
     }
 }

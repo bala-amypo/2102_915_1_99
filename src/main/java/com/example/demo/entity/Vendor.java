@@ -13,12 +13,13 @@ public class Vendor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String vendorName;
 
     private String contactEmail;
     private String phone;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "vendor-assets")
@@ -40,6 +41,9 @@ public class Vendor {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
     public List<Asset> getAssets() { return assets; }
     public void setAssets(List<Asset> assets) { this.assets = assets; }

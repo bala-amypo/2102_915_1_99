@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
-    boolean existsByVendorName(String vendorName);
+    boolean existsByVendorNameIgnoreCase(String vendorName);
 
-    Optional<Vendor> findByVendorName(String vendorName);
+    Optional<Vendor> findByVendorNameIgnoreCase(String vendorName);
 }
