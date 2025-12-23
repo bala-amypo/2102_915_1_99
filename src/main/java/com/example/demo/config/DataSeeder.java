@@ -8,7 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Configuration
 public class DataSeeder implements CommandLineRunner {
@@ -30,25 +31,41 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                .orElseGet(() -> roleRepository.save(new Role("ROLE_ADMIN")));
+        Role adminRole = roleRepository.findByName("ADMIN")
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setName("ADMIN");
+                    return roleRepository.save(role);
+                });
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
+        Role userRole = roleRepository.findByName("USER")
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setName("USER");
+                    return roleRepository.save(role);
+                });
 
-        if (userRepository.findByUsername("admin").isEmpty()) {
+        Optional<User> adminOpt = userRepository.findByEmail("admin@example.com");
+        if (adminOpt.isEmpty()) {
             User admin = new User();
             admin.setUsername("admin");
+            admin.setEmail("admin@example.com");
+            admin.setName("Admin");
             admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRoles(Set.of(adminRole));
+            admin.setRole(adminRole);
+            admin.setCreatedAt(LocalDateTime.now());
             userRepository.save(admin);
         }
 
-        if (userRepository.findByUsername("user").isEmpty()) {
+        Optional<User> userOpt = userRepository.findByEmail("user@example.com");
+        if (userOpt.isEmpty()) {
             User user = new User();
             user.setUsername("user");
+            user.setEmail("user@example.com");
+            user.setName("User");
             user.setPassword(passwordEncoder.encode("user123"));
-            user.setRoles(Set.of(userRole));
+            user.setRole(userRole);
+            user.setCreatedAt(LocalDateTime.now());
             userRepository.save(user);
         }
     }
