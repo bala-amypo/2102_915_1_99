@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,18 +21,25 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
+    public ResponseEntity<?> login(
+            @RequestParam String email,
+            @RequestParam String password
+    ) {
 
-        User user = userRepository.findByEmail(req.get("email")).orElseThrow();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow();
+
+        Set<String> roles = user.getRoles()
+                .stream()
+                .map(r -> r.getName())
+                .collect(Collectors.toSet());
 
         String token = jwtUtil.generateToken(
                 user.getEmail(),
                 user.getId(),
-                user.getRoles().stream()
-                        .map(r -> r.getName())
-                        .collect(Collectors.toList())
+                roles
         );
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(token);
     }
 }
