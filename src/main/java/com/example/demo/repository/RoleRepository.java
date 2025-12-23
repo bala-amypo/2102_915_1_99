@@ -9,5 +9,9 @@ import java.util.Optional;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
+    // Case-insensitive lookup
+    Optional<Role> findByNameIgnoreCase(String name);
+
+    // Still keep the original if needed
     Optional<Role> findByName(String name);
 }
