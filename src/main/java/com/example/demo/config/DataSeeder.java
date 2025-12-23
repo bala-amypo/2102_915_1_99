@@ -24,17 +24,21 @@ public class DataSeeder {
 
             if (roleRepository.count() == 0) {
                 Role adminRole = new Role("ADMIN");
+                adminRole.setCreatedAt(LocalDateTime.now());
+                adminRole.setUpdatedAt(LocalDateTime.now());
+
                 Role userRole = new Role("USER");
+                userRole.setCreatedAt(LocalDateTime.now());
+                userRole.setUpdatedAt(LocalDateTime.now());
 
                 roleRepository.save(adminRole);
                 roleRepository.save(userRole);
             }
 
-            Role adminRole = roleRepository.findByName("ADMIN").orElseThrow();
-            Role userRole = roleRepository.findByName("USER").orElseThrow();
+            Role adminRole = roleRepository.findByNameIgnoreCase("ADMIN").orElseThrow();
+            Role userRole = roleRepository.findByNameIgnoreCase("USER").orElseThrow();
 
             if (userRepository.count() == 0) {
-
                 User admin = new User(
                         "Admin",
                         "admin",
@@ -43,6 +47,7 @@ public class DataSeeder {
                         adminRole
                 );
                 admin.setCreatedAt(LocalDateTime.now());
+                admin.setUpdatedAt(LocalDateTime.now());
 
                 User user = new User(
                         "User",
@@ -52,6 +57,7 @@ public class DataSeeder {
                         userRole
                 );
                 user.setCreatedAt(LocalDateTime.now());
+                user.setUpdatedAt(LocalDateTime.now());
 
                 userRepository.save(admin);
                 userRepository.save(user);
