@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
-    boolean existsByAssetTag(String assetTag);
-    List<Asset> findByStatus(String status);
+    boolean existsByAssetTagIgnoreCase(String assetTag);
+    List<Asset> findByStatusIgnoreCase(String status);
     List<Asset> findByVendor(Vendor vendor);
 }
