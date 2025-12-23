@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,7 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
 
@@ -39,20 +40,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token) && !jwtUtil.isTokenExpired(token)) {
 
-                String email = jwtUtil.getEmailFromToken(token);
-                var claims = jwtUtil.getClaims(token);
-
-                @SuppressWarnings("unchecked")
-                Collection<String> roles =
-                        (Collection<String>) claims.get("roles");
+                String username = jwtUtil.getUsernameFromToken(token);
+                Set<String> roles = jwtUtil.getRolesFromToken(token);
 
                 List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                email,
+                                username,
                                 null,
                                 authorities
                         );

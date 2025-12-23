@@ -18,12 +18,11 @@ public class JwtUtil {
 
     private final long expirationMs = 24 * 60 * 60 * 1000;
 
-    public String generateToken(String email, Long userId, Set<String> roles) {
+    public String generateToken(String username, Long userId, Set<String> roles) {
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(username)
                 .addClaims(Map.of(
-                        "email", email,
                         "userId", userId,
                         "roles", roles
                 ))
@@ -46,8 +45,13 @@ public class JwtUtil {
         return getClaims(token).getExpiration().before(new Date());
     }
 
-    public String getEmailFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         return getClaims(token).getSubject();
+    }
+
+    public Set<String> getRolesFromToken(String token) {
+        Object roles = getClaims(token).get("roles");
+        return roles == null ? Set.of() : Set.copyOf((Set<String>) roles);
     }
 
     public Claims getClaims(String token) {
