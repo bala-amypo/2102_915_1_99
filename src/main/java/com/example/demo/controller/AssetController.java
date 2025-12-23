@@ -19,11 +19,15 @@ public class AssetController {
         this.assetService = assetService;
     }
 
-    @PostMapping
+    @PostMapping("/vendor/{vendorId}/rule/{ruleId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<?> createAsset(@RequestBody Asset asset) {
+    public ResponseEntity<?> createAsset(
+            @PathVariable Long vendorId,
+            @PathVariable Long ruleId,
+            @RequestBody Asset asset
+    ) {
         try {
-            Asset created = assetService.createAsset(asset);
+            Asset created = assetService.createAsset(vendorId, ruleId, asset);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

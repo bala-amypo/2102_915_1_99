@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
+        // Prevent duplicate email or username
+        if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+            throw new BadRequestException("Email already registered");
+        }
+        if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
+            throw new BadRequestException("Username already taken");
+        }
+
         // Encode password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User saved = userRepository.save(user);
@@ -38,8 +47,8 @@ public class AuthController {
             @RequestParam String email,
             @RequestParam String password
     ) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new BadRequestException("User not found"));
 
         // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {

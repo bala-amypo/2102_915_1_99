@@ -19,16 +19,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        User user = userRepository.findByEmail(email)
+        // Use case-insensitive lookup
+        User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found"));
+                        new UsernameNotFoundException("User not found with email: " + email));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
                 user.getRoles()
                         .stream()
-                        .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
+                        .map(r -> new SimpleGrantedAuthority(r.getName())) // Role names already normalized
                         .collect(Collectors.toSet())
         );
     }
