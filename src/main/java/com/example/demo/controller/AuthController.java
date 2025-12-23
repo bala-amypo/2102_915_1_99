@@ -20,63 +20,81 @@ import java.util.Set;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    
+
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                         RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil
+    ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
-    
+
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
+
+        String username = request.get("username");
         String password = request.get("password");
-        String name = request.get("name");
-        
-        if (userRepository.findByEmail(email).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Email already exists"));
+
+        if (userRepository.findByUsername(username).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
         }
-        
+
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
+
         User user = new User();
-        user.setEmail(email);
-        user.setName(name);
+        user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        
-        Role userRole = roleRepository.findByName("USER")
-            .orElseGet(() -> roleRepository.save(new Role("USER")));
         user.getRoles().add(userRole);
-        
+
         User saved = userRepository.save(user);
-        
+
         return ResponseEntity.ok(Map.of(
-            "id", saved.getId(),
-            "email", saved.getEmail(),
-            "name", saved.getName()
+                "id", saved.getId(),
+                "username", saved.getUsername()
         ));
     }
-    
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
         );
-        
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        
+
+        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
+
         Set<String> roles = new HashSet<>();
         user.getRoles().forEach(role -> roles.add(role.getName()));
-        
-        String token = jwtUtil.generateToken(user.getEmail(), user.getId(), roles);
-        
-        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), roles));
+
+        String token = jwtUtil.generateToken(
+                user.getUsername(),
+                user.getId(),
+                roles
+        );
+
+        return ResponseEntity.ok(
+                new AuthResponse(
+                        token,
+                        user.getId(),
+                        user.getUsername(),
+                        roles
+                )
+        );
     }
 }
