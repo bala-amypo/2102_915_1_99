@@ -10,4 +10,3 @@ public interface AssetLifecycleEventService {
 
     AssetLifecycleEvent logEvent(Long assetId, AssetLifecycleEvent event);
 }
-    
