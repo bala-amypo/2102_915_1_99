@@ -2,6 +2,8 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -18,27 +20,31 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false)
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public User() {
     }
 
-    public User(String email, String name, String username, String password, Role role) {
+    public User(Long id, String email, String name, String password, String username, Role role) {
+        this.id = id;
         this.email = email;
         this.name = name;
-        this.username = username;
         this.password = password;
+        this.username = username;
         this.role = role;
+    }
+
+    @PrePersist
+    public void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
@@ -50,47 +56,59 @@ public class User {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getUsername() {
+        return username;
     }
 
     public Role getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    //  PORTAL COMPATIBILITY METHOD
+    public Set<String> getRoles() {
+        if (this.role == null) {
+            return Collections.emptySet();
+        }
+        return Set.of(this.role.getName());
     }
 }
