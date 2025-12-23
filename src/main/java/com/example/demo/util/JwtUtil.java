@@ -6,8 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -16,16 +17,14 @@ public class JwtUtil {
             "mysecretkeymysecretkeymysecretkey12345".getBytes()
     );
 
-    private final long expirationMs = 24 * 60 * 60 * 1000;
+    private final long expirationMs = 24 * 60 * 60 * 1000; // 24 hours
 
-    public String generateToken(String username, Long userId, Set<String> roles) {
-
+    public String generateToken(String username, String email, Long userId, Set<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
-                .addClaims(Map.of(
-                        "userId", userId,
-                        "roles", roles
-                ))
+                .claim("email", email)
+                .claim("userId", userId)
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -49,12 +48,25 @@ public class JwtUtil {
         return getClaims(token).getSubject();
     }
 
-    public Set<String> getRolesFromToken(String token) {
-        Object roles = getClaims(token).get("roles");
-        return roles == null ? Set.of() : Set.copyOf((Set<String>) roles);
+    public String getEmailFromToken(String token) {
+        return getClaims(token).get("email", String.class);
     }
 
-    public Claims getClaims(String token) {
+    public Long getUserIdFromToken(String token) {
+        return getClaims(token).get("userId", Long.class);
+    }
+
+    public Set<String> getRolesFromToken(String token) {
+        Object roles = getClaims(token).get("roles");
+        if (roles instanceof List<?>) {
+            return ((List<?>) roles).stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toSet());
+        }
+        return Set.of();
+    }
+
+    private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
