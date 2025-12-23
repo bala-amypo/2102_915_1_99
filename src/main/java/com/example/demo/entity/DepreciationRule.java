@@ -63,4 +63,13 @@ public class DepreciationRule {
     }
 
     public double getSalvageValue() { return salvageValue; }
-    public void setSalvageValue(double
+    public void setSalvageValue(double salvageValue) {
+        this.salvageValue = salvageValue;
+    }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public List<Asset> getAssets() { return assets; }
+    public void setAssets(List<Asset> assets) { this.assets = assets; }
+}
