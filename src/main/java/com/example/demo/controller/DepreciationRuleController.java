@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.DepreciationRule;
 import com.example.demo.service.DepreciationRuleService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,8 +18,13 @@ public class DepreciationRuleController {
     }
     
     @PostMapping
-    public ResponseEntity<DepreciationRule> createRule(@RequestBody DepreciationRule rule) {
-        DepreciationRule created = depreciationRuleService.createRule(rule);
-        return ResponseEntity.ok(created);
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<?> createRule(@RequestBody DepreciationRule rule) {
+        try {
+            DepreciationRule created = depreciationRuleService.createRule(rule);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 }
