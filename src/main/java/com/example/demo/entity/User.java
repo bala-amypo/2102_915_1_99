@@ -104,11 +104,11 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    //  PORTAL COMPATIBILITY METHOD
-    public Set<String> getRoles() {
+    // PORTAL EXPECTS THIS EXACT SIGNATURE
+    public Set<Role> getRoles() {
         if (this.role == null) {
             return Collections.emptySet();
         }
-        return Set.of(this.role.getName());
+        return Set.of(this.role);
     }
 }
