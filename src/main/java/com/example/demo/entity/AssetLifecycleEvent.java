@@ -13,67 +13,35 @@ public class AssetLifecycleEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "asset_id")
-    @JsonBackReference
-    private Asset asset;
-
-    @Column(name = "event_type")
     private String eventType;
-
-    @Column(name = "event_description")
     private String eventDescription;
-
-    @Column(name = "event_date")
     private LocalDate eventDate;
-
-    @Column(name = "logged_at")
     private LocalDateTime loggedAt;
 
-    public AssetLifecycleEvent() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "asset_id")
+    @JsonBackReference(value = "asset-events")
+    private Asset asset;
 
-    public Long getId() {
-        return id;
-    }
+    public AssetLifecycleEvent() {}
 
-    public Asset getAsset() {
-        return asset;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setAsset(Asset asset) {
-        this.asset = asset;
-    }
+    public String getEventType() { return eventType; }
+    public void setEventType(String eventType) { this.eventType = eventType; }
 
-    public String getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
-
-    public String getEventDescription() {
-        return eventDescription;
-    }
-
+    public String getEventDescription() { return eventDescription; }
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
     }
 
-    public LocalDate getEventDate() {
-        return eventDate;
-    }
+    public LocalDate getEventDate() { return eventDate; }
+    public void setEventDate(LocalDate eventDate) { this.eventDate = eventDate; }
 
-    public void setEventDate(LocalDate eventDate) {
-        this.eventDate = eventDate;
-    }
+    public LocalDateTime getLoggedAt() { return loggedAt; }
+    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
 
-    public LocalDateTime getLoggedAt() {
-        return loggedAt;
-    }
-
-    public void setLoggedAt(LocalDateTime loggedAt) {
-        this.loggedAt = loggedAt;
-    }
+    public Asset getAsset() { return asset; }
+    public void setAsset(Asset asset) { this.asset = asset; }
 }
