@@ -1,44 +1,40 @@
+// src/main/java/com/example/demo/service/impl/DepreciationRuleServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.DepreciationRule;
-import com.example.demo.repository.DepreciationRuleRepository;
 import com.example.demo.service.DepreciationRuleService;
+import com.example.demo.repository.DepreciationRuleRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class DepreciationRuleServiceImpl implements DepreciationRuleService {
-    
-    private final DepreciationRuleRepository depreciationRuleRepository;
-    
-    public DepreciationRuleServiceImpl(DepreciationRuleRepository depreciationRuleRepository) {
-        this.depreciationRuleRepository = depreciationRuleRepository;
+
+    private final DepreciationRuleRepository ruleRepo;
+
+    public DepreciationRuleServiceImpl(DepreciationRuleRepository ruleRepo) {
+        this.ruleRepo = ruleRepo;
     }
-    
+
     @Override
     public DepreciationRule createRule(DepreciationRule rule) {
-        // Validate useful life
-        if (rule.getUsefulLifeYears() <= 0) {
-            throw new IllegalArgumentException("Useful life years must be positive");
+        if (rule.getUsefulLifeYears() == null || rule.getUsefulLifeYears() <= 0) {
+            throw new IllegalArgumentException("Invalid useful life");
         }
-        
-        // Validate salvage value
-        if (rule.getSalvageValue() < 0) {
-            throw new IllegalArgumentException("Salvage value cannot be negative");
+        if (rule.getSalvageValue() == null || rule.getSalvageValue() < 0) {
+            throw new IllegalArgumentException("Invalid salvage value");
         }
-        
-        // Validate method (case-insensitive)
-        String method = rule.getMethod().toUpperCase();
-        if (!method.equals("STRAIGHT_LINE") && !method.equals("DECLINING_BALANCE")) {
-            throw new IllegalArgumentException("Method must be STRAIGHT_LINE or DECLINING_BALANCE");
+        if (!"STRAIGHT_LINE".equals(rule.getMethod()) && !"DECLINING_BALANCE".equals(rule.getMethod())) {
+            throw new IllegalArgumentException("Invalid method");
         }
-        rule.setMethod(method);
+        rule.setCreatedAt(LocalDateTime.now());
+        return ruleRepo.save(rule);
+    }
 
-        // Check for duplicate rule name
-        if (depreciationRuleRepository.existsByRuleName(rule.getRuleName())) {
-            throw new IllegalArgumentException("Depreciation rule with name '" + rule.getRuleName() + "' already exists");
-        }
-        
-        // Audit fields handled by @PrePersist/@PreUpdate in entity
-        return depreciationRuleRepository.save(rule);
+    @Override
+    public List<DepreciationRule> getAllRules() {
+        return ruleRepo.findAll();
     }
 }

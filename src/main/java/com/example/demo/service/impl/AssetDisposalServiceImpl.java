@@ -1,7 +1,14 @@
+// src/main/java/com/example/demo/service/impl/AssetDisposalServiceImpl.java
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.Asset;
+import com.example.demo.entity.AssetDisposal;
+import com.example.demo.entity.Role;
+import com.example.demo.entity.User;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.AssetDisposalRepository;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AssetDisposalService;
 import org.springframework.stereotype.Service;
 
@@ -10,51 +17,46 @@ import java.time.LocalDateTime;
 @Service
 public class AssetDisposalServiceImpl implements AssetDisposalService {
 
-    private final AssetRepository assetRepository;
-    private final AssetDisposalRepository disposalRepository;
-    private final UserRepository userRepository;
+    private final AssetDisposalRepository disposalRepo;
+    private final AssetRepository assetRepo;
+    private final UserRepository userRepo;
 
-    public AssetDisposalServiceImpl(
-            AssetRepository assetRepository,
-            AssetDisposalRepository disposalRepository,
-            UserRepository userRepository
-    ) {
-        this.assetRepository = assetRepository;
-        this.disposalRepository = disposalRepository;
-        this.userRepository = userRepository;
+    public AssetDisposalServiceImpl(AssetDisposalRepository disposalRepo,
+                                    AssetRepository assetRepo,
+                                    UserRepository userRepo) {
+        this.disposalRepo = disposalRepo;
+        this.assetRepo = assetRepo;
+        this.userRepo = userRepo;
     }
 
     @Override
-    public AssetDisposal requestDisposal(Long assetId, Long userId) {
-
-        Asset asset = assetRepository.findById(assetId)
-                .orElseThrow();
-
-        User user = userRepository.findById(userId)
-                .orElseThrow();
-
-        AssetDisposal disposal = new AssetDisposal();
+    public AssetDisposal requestDisposal(Long assetId, AssetDisposal disposal) {
+        Asset asset = assetRepo.findById(assetId)
+            .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+        if (disposal.getDisposalValue() == null || disposal.getDisposalValue() < 0) {
+            throw new IllegalArgumentException("Invalid disposal value");
+        }
         disposal.setAsset(asset);
-        disposal.setRequestedBy(user);
-        disposal.setStatus("REQUESTED");
-        disposal.setRequestedAt(LocalDateTime.now());
-
-        return disposalRepository.save(disposal);
+        disposal.setCreatedAt(LocalDateTime.now());
+        return disposalRepo.save(disposal);
     }
 
     @Override
-    public AssetDisposal approveDisposal(Long disposalId, Long adminUserId) {
+    public AssetDisposal approveDisposal(Long disposalId, Long adminId) {
+        AssetDisposal disp = disposalRepo.findById(disposalId)
+            .orElseThrow(() -> new ResourceNotFoundException("Disposal not found"));
+        User admin = userRepo.findById(adminId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        AssetDisposal disposal = disposalRepository.findById(disposalId)
-                .orElseThrow();
+        boolean isAdmin = admin.getRoles().stream().map(Role::getName).anyMatch("ADMIN"::equals);
+        if (!isAdmin) {
+            throw new IllegalArgumentException("Not authorized");
+        }
 
-        User admin = userRepository.findById(adminUserId)
-                .orElseThrow();
-
-        disposal.setApprovedBy(admin);
-        disposal.setApprovedAt(LocalDateTime.now());
-        disposal.setStatus("APPROVED");
-
-        return disposalRepository.save(disposal);
+        disp.setApprovedBy(admin);
+        Asset asset = disp.getAsset();
+        asset.setStatus("DISPOSED");
+        assetRepo.save(asset);
+        return disposalRepo.save(disp);
     }
 }
