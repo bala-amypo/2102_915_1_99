@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/assets")
 public class AssetController {
-
     private final AssetService assetService;
 
     public AssetController(AssetService assetService) {
@@ -32,8 +31,7 @@ public class AssetController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<?> byStatus(@PathVariable String status) {
-        // Return 2xx with list or 4xx if unknown acceptable; keeping 2xx for broad compatibility
+    public ResponseEntity<List<Asset>> byStatus(@PathVariable String status) {
         return ResponseEntity.ok(assetService.getAssetsByStatus(status));
     }
 

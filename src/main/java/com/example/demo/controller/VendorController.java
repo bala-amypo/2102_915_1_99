@@ -30,13 +30,10 @@ public class VendorController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> one(@PathVariable Long id) {
-        // For tests that may 404 or 401, we implement standard 404 via service in repository path
-        // Expose repository path indirectly; simplest is to query and return 404 if missing
-        // However, our service does not have getById; we can simulate:
         return vendorService.getAllVendors().stream()
-            .filter(v -> v.getId().equals(id))
-            .findFirst()
-            .<ResponseEntity<?>>map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.status(404).body("Vendor not found"));
+                .filter(v -> v.getId().equals(id))
+                .findFirst()
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(404).body("Vendor not found"));
     }
 }
