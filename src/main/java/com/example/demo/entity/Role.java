@@ -12,47 +12,23 @@ public class Role {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String name;
+    private String name; // should be "ADMIN" or "USER"
 
-    @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     public Role() {}
 
     public Role(String name) {
-        this.name = normalizeRoleName(name);
+        this.name = name;
     }
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        name = normalizeRoleName(name);
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = LocalDateTime.now();
-        name = normalizeRoleName(name);
-    }
-
-    private String normalizeRoleName(String roleName) {
-        if (roleName == null) return null;
-        roleName = roleName.trim().toUpperCase();
-        if (!roleName.startsWith("ROLE_")) {
-            roleName = "ROLE_" + roleName;
-        }
-        return roleName;
-    }
-
+    // getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public String getName() { return name; }
-    public void setName(String name) { this.name = normalizeRoleName(name); }
+    public void setName(String name) { this.name = name; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

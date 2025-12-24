@@ -30,26 +30,15 @@ public class DataSeeder {
         return args -> {
             // Ensure roles ADMIN and USER exist
             Role adminRole = roleRepository.findByName("ADMIN")
-                    .orElseGet(() -> {
-                        Role r = new Role("ADMIN");
-                        r.setCreatedAt(LocalDateTime.now());
-                        r.setUpdatedAt(LocalDateTime.now());
-                        return roleRepository.save(r);
-                    });
-
+                    .orElseGet(() -> roleRepository.save(new Role("ADMIN")));
             Role userRole = roleRepository.findByName("USER")
-                    .orElseGet(() -> {
-                        Role r = new Role("USER");
-                        r.setCreatedAt(LocalDateTime.now());
-                        r.setUpdatedAt(LocalDateTime.now());
-                        return roleRepository.save(r);
-                    });
+                    .orElseGet(() -> roleRepository.save(new Role("USER")));
 
             // Ensure integration admin user exists
             userRepository.findByEmail("integration_admin@example.com").orElseGet(() -> {
                 User admin = new User();
                 admin.setName("Integration Admin");
-                admin.setUsername("integration_admin"); // FIX: set username
+                admin.setUsername("integration_admin");
                 admin.setEmail("integration_admin@example.com");
                 admin.setPassword(passwordEncoder.encode("adminpass"));
                 admin.setRoles(Set.of(adminRole));
@@ -62,7 +51,7 @@ public class DataSeeder {
             userRepository.findByEmail("integration_user@example.com").orElseGet(() -> {
                 User user = new User();
                 user.setName("Integration User");
-                user.setUsername("integration_user"); // FIX: set username
+                user.setUsername("integration_user");
                 user.setEmail("integration_user@example.com");
                 user.setPassword(passwordEncoder.encode("userpass"));
                 user.setRoles(Set.of(userRole));
