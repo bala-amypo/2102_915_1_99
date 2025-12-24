@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Vendor;
 import com.example.demo.service.VendorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +22,7 @@ public class VendorController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<?> createVendor(@RequestBody Vendor vendor) {
+    public ResponseEntity<?> createVendor(@Valid @RequestBody Vendor vendor) {
         try {
             Vendor created = vendorService.createVendor(vendor);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);

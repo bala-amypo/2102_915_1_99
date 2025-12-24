@@ -5,9 +5,7 @@ import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class VendorServiceImpl implements VendorService {
@@ -20,21 +18,18 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor createVendor(Vendor vendor) {
-        // Normalize name for case-insensitive uniqueness
-        String normalizedName = vendor.getVendorName().trim().toLowerCase();
-        if (vendorRepository.existsByVendorNameIgnoreCase(normalizedName)) {
-            throw new IllegalArgumentException("Vendor with name '" + vendor.getVendorName() + "' already exists");
+        // Ensure vendor name is unique (case-insensitive handled by repository)
+        if (vendorRepository.existsByVendorName(vendor.getVendorName())) {
+            throw new IllegalArgumentException("Vendor name already exists");
         }
-        vendor.setVendorName(normalizedName);
-        vendor.setCreatedAt(LocalDateTime.now());
-        vendor.setUpdatedAt(LocalDateTime.now());
+        // Audit fields handled by @PrePersist/@PreUpdate in entity
         return vendorRepository.save(vendor);
     }
 
     @Override
     public Vendor getVendorById(Long id) {
         return vendorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Vendor not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Vendor not found"));
     }
 
     @Override
@@ -45,7 +40,7 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public void deleteVendor(Long id) {
         Vendor vendor = vendorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Vendor not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Vendor not found"));
         vendorRepository.delete(vendor);
     }
 }
