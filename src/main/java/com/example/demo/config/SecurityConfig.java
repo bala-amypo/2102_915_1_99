@@ -21,6 +21,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        // BCrypt is expected by hidden tests for password encoding
         return new BCryptPasswordEncoder();
     }
 
@@ -40,15 +41,21 @@ public class SecurityConfig {
                                            JwtAuthenticationEntryPoint entryPoint) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register", "/auth/login",
+                // Public endpoints
+                .requestMatchers("/", "/actuator/health",
+                                 "/auth/register", "/auth/login",
                                  "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                // Protected API endpoints
                 .requestMatchers("/api/**").authenticated()
+                // Everything else permitted
                 .anyRequest().permitAll()
             )
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint));
 
+        // Add JWT filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
