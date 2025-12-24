@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Configuration
 public class DataSeeder {
@@ -22,6 +23,7 @@ public class DataSeeder {
     ) {
         return args -> {
 
+            // Seed roles if none exist
             if (roleRepository.count() == 0) {
                 Role adminRole = new Role("ADMIN");
                 adminRole.setCreatedAt(LocalDateTime.now());
@@ -35,9 +37,13 @@ public class DataSeeder {
                 roleRepository.save(userRole);
             }
 
-            Role adminRole = roleRepository.findByNameIgnoreCase("ADMIN").orElseThrow();
-            Role userRole = roleRepository.findByNameIgnoreCase("USER").orElseThrow();
+            // Query with normalized names
+            Role adminRole = roleRepository.findByNameIgnoreCase("ROLE_ADMIN")
+                    .orElseThrow(() -> new IllegalStateException("ROLE_ADMIN not found"));
+            Role userRole = roleRepository.findByNameIgnoreCase("ROLE_USER")
+                    .orElseThrow(() -> new IllegalStateException("ROLE_USER not found"));
 
+            // Seed users if none exist
             if (userRepository.count() == 0) {
                 User admin = new User(
                         "Admin",
