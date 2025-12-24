@@ -1,9 +1,11 @@
-// src/main/java/com/example/demo/entity/User.java
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -34,6 +36,7 @@ public class User {
 
     @NotBlank(message = "Password is required")
     @Column(nullable = false)
+    @JsonIgnore // prevent password from leaking in API responses
     private String password;
 
     @Column(name = "created_at", nullable = false)
@@ -46,6 +49,7 @@ public class User {
     @JoinTable(name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonManagedReference // prevents infinite recursion with Role.users
     private Set<Role> roles = new HashSet<>();
 
     public User() {}
@@ -113,7 +117,6 @@ public class User {
     public Set<Role> getRoles() { return roles; }
     public void setRoles(Set<Role> roles) { this.roles = roles; }
 
-    // Equality and hashCode for proper Hibernate behavior in sets
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

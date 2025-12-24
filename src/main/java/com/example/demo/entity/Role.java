@@ -1,8 +1,9 @@
-// src/main/java/com/example/demo/entity/Role.java
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -27,6 +28,7 @@ public class Role {
     private LocalDateTime updatedAt;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @JsonBackReference // prevents infinite recursion with User.roles
     private Set<User> users = new HashSet<>();
 
     public Role() {}
