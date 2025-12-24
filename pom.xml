@@ -62,7 +62,7 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.8.0</version>
-            <scope>provided</scope>
+           
         </dependency>
 
         <!-- H2 Database (for tests/local dev) -->
@@ -128,16 +128,14 @@
 
     </dependencies>
 
-    <build>
+     <build>
         <plugins>
 
-            <!-- Spring Boot plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Surefire plugin with TestNG support -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
