@@ -126,7 +126,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
 
-      <!-- Surefire plugin configured for TestNG -->
+      <!-- Surefire plugin with TestNG provider -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -138,11 +138,7 @@
             <version>3.2.5</version>
           </dependency>
         </dependencies>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
-        </configuration>
+        <!-- Removed suiteXmlFiles to avoid missing testng.xml error -->
       </plugin>
     </plugins>
   </build>
