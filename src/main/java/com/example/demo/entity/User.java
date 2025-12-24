@@ -2,26 +2,36 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "email"),
+    @UniqueConstraint(columnNames = "username")
+})
 public class User {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Username is required")
     @Column(nullable = false, unique = true)
-    private String username;   // NEW FIELD
+    private String username;
 
     private String name;
 
+    @NotBlank(message = "Email is required")
+    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password is required")
     @Column(nullable = false)
     private String password;
 
@@ -40,7 +50,9 @@ public class User {
     public User() {}
 
     public User(String username, String name, String email, String password, Set<Role> roles) {
-        this.username = username;
+        this.username = (username == null || username.isBlank())
+                ? generateDefaultUsername(email)
+                : username;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -58,11 +70,21 @@ public class User {
         if (updatedAt == null) {
             updatedAt = now;
         }
+        if (username == null || username.isBlank()) {
+            username = generateDefaultUsername(email);
+        }
     }
 
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    private String generateDefaultUsername(String email) {
+        if (email != null && !email.isBlank()) {
+            return email.split("@")[0];
+        }
+        return "user-" + UUID.randomUUID().toString().substring(0, 8);
     }
 
     // Getters and setters
