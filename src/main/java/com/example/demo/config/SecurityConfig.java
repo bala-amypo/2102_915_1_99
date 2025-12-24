@@ -1,3 +1,4 @@
+// src/main/java/com/example/demo/config/SecurityConfig.java
 package com.example.demo.config;
 
 import com.example.demo.util.JwtUtil;
@@ -44,10 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/actuator/health",
                                  "/auth/register", "/auth/login",
                                  "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                // Role-based protected endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/user/**").hasRole("USER")
-                // General API protection
+                // Protected API endpoints
                 .requestMatchers("/api/**").authenticated()
                 // Everything else permitted
                 .anyRequest().permitAll()

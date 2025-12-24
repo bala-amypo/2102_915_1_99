@@ -1,3 +1,4 @@
+// src/main/java/com/example/demo/service/impl/UserServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Role;
@@ -27,43 +28,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Email is required");
+            throw new IllegalArgumentException("Email required");
         }
-        if (user.getUsername() == null || user.getUsername().isBlank()) {
-            throw new IllegalArgumentException("Username is required");
-        }
-        if (userRepo.existsByEmail(user.getEmail())) {
+        if (userRepo.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
-        if (userRepo.existsByUsername(user.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-
-        // Encode password
         user.setPassword(encoder.encode(user.getPassword()));
-
-        // Assign default role
-        Role defaultRole = roleRepo.findByName("USER")
-                .orElseGet(() -> roleRepo.save(new Role("USER")));
+        Role defaultRole = roleRepo.findByName("USER").orElseGet(() -> roleRepo.save(new Role("USER")));
         user.getRoles().add(defaultRole);
-
-        // Audit fields
-        LocalDateTime now = LocalDateTime.now();
-        user.setCreatedAt(now);
-        user.setUpdatedAt(now);
-
+        user.setCreatedAt(LocalDateTime.now());
         return userRepo.save(user);
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepo.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        return userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Override
     public User findById(Long id) {
-        return userRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        return userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
