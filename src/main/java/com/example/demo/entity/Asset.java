@@ -3,6 +3,10 @@ package com.example.demo.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,22 +19,27 @@ public class Asset {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Asset tag is required")
     @Column(nullable = false, unique = true)
     private String assetTag;
 
+    @NotBlank(message = "Asset name is required")
     @Column(nullable = false)
     private String assetName;
 
+    @NotNull(message = "Purchase date is required")
     @Column(nullable = false)
     private LocalDate purchaseDate;
 
+    @Positive(message = "Purchase cost must be positive")
     @Column(nullable = false)
     private double purchaseCost;
 
+    @NotBlank(message = "Status is required")
     @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
@@ -52,7 +61,7 @@ public class Asset {
 
     @PrePersist
     public void prePersist() {
-        if (status == null) {
+        if (status == null || status.isBlank()) {
             status = "ACTIVE";
         }
         createdAt = LocalDateTime.now();
@@ -66,6 +75,7 @@ public class Asset {
 
     public Asset() {}
 
+    // Getters and setters...
     public Long getId() { return id; }
 
     public String getAssetTag() { return assetTag; }

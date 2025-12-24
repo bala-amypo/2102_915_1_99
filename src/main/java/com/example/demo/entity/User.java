@@ -1,6 +1,9 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,15 +16,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name is required")
     @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "Username is required")
     @Column(nullable = false, unique = true)
     private String username;
 
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email must be valid")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     @Column(nullable = false)
     private String password;
 
@@ -33,7 +42,7 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
@@ -60,6 +69,7 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
+    // Getters and setters...
     public Long getId() { return id; }
 
     public String getName() { return name; }
