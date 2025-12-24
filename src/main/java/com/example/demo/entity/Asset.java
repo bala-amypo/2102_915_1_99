@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/entity/Asset.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -29,8 +28,9 @@ public class Asset {
     private DepreciationRule depreciationRule;
 
     @Column(nullable = false)
-    private String status = "ACTIVE"; // default
+    private String status = "ACTIVE";
 
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public Asset() {}
@@ -45,6 +45,13 @@ public class Asset {
         this.depreciationRule = rule;
         this.status = "ACTIVE";
         this.createdAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() { return id; }

@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/entity/AssetLifecycleEvent.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -8,7 +7,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "asset_lifecycle_events")
 public class AssetLifecycleEvent {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
@@ -23,6 +23,7 @@ public class AssetLifecycleEvent {
     @Column(nullable = false)
     private LocalDate eventDate;
 
+    @Column(name = "logged_at", nullable = false)
     private LocalDateTime loggedAt;
 
     public AssetLifecycleEvent() {}
@@ -33,6 +34,13 @@ public class AssetLifecycleEvent {
         this.eventDescription = eventDescription;
         this.eventDate = eventDate;
         this.loggedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (loggedAt == null) {
+            loggedAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() { return id; }

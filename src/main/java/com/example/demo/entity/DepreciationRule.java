@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/entity/DepreciationRule.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -14,7 +13,7 @@ public class DepreciationRule {
     private String ruleName;
 
     @Column(nullable = false)
-    private String method; // STRAIGHT_LINE or DECLINING_BALANCE
+    private String method;
 
     @Column(nullable = false)
     private Integer usefulLifeYears;
@@ -22,6 +21,7 @@ public class DepreciationRule {
     @Column(nullable = false)
     private Double salvageValue;
 
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public DepreciationRule() {}
@@ -32,6 +32,13 @@ public class DepreciationRule {
         this.usefulLifeYears = usefulLifeYears;
         this.salvageValue = salvageValue;
         this.createdAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() { return id; }
