@@ -2,6 +2,9 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -13,16 +16,19 @@ public class AssetLifecycleEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Event type is required")
     @Column(nullable = false)
     private String eventType;
 
+    @NotBlank(message = "Event description is required")
     @Column(nullable = false)
     private String eventDescription;
 
+    @NotNull(message = "Event date is required")
     @Column(nullable = false)
     private LocalDate eventDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime loggedAt;
 
     @Column(nullable = false)
@@ -46,6 +52,7 @@ public class AssetLifecycleEvent {
 
     public AssetLifecycleEvent() {}
 
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

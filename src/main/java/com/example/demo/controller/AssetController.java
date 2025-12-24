@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.service.AssetService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +25,7 @@ public class AssetController {
     public ResponseEntity<?> createAsset(
             @PathVariable Long vendorId,
             @PathVariable Long ruleId,
-            @RequestBody Asset asset
+            @Valid @RequestBody Asset asset
     ) {
         try {
             Asset created = assetService.createAsset(vendorId, ruleId, asset);

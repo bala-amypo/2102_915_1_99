@@ -2,6 +2,10 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,25 +17,29 @@ public class DepreciationRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Rule name is required")
     @Column(nullable = false, unique = true)
     private String ruleName;
 
+    @NotBlank(message = "Method is required")
     @Column(nullable = false)
     private String method;
 
+    @Positive(message = "Useful life years must be positive")
     @Column(nullable = false)
     private int usefulLifeYears;
 
+    @PositiveOrZero(message = "Salvage value must be zero or positive")
     @Column(nullable = false)
     private double salvageValue;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "depreciationRule", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "depreciationRule", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "rule-assets")
     private List<Asset> assets;
 
@@ -48,6 +56,7 @@ public class DepreciationRule {
 
     public DepreciationRule() {}
 
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

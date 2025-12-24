@@ -3,15 +3,12 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Asset;
 import com.example.demo.entity.DepreciationRule;
 import com.example.demo.entity.Vendor;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AssetRepository;
 import com.example.demo.repository.DepreciationRuleRepository;
 import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.AssetService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -33,27 +30,34 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public Asset createAsset(Long vendorId, Long ruleId, Asset asset) {
-
+        // Ensure vendor exists
         Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id " + vendorId));
+                .orElseThrow(() -> new IllegalArgumentException("Vendor not found"));
 
+        // Ensure depreciation rule exists
         DepreciationRule rule = depreciationRuleRepository.findById(ruleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found with id " + ruleId));
+                .orElseThrow(() -> new IllegalArgumentException("Depreciation rule not found"));
 
+        // Validate purchase cost
         if (asset.getPurchaseCost() <= 0) {
-            throw new BadRequestException("Purchase cost must be greater than zero");
+            throw new IllegalArgumentException("Purchase cost must be greater than zero");
         }
 
-        if (assetRepository.existsByAssetTagIgnoreCase(asset.getAssetTag())) {
-            throw new BadRequestException("Asset tag '" + asset.getAssetTag() + "' already exists");
+        // Ensure asset tag is unique
+        if (assetRepository.existsByAssetTag(asset.getAssetTag())) {
+            throw new IllegalArgumentException("Asset tag already exists");
         }
 
+        // Link vendor and rule
         asset.setVendor(vendor);
         asset.setDepreciationRule(rule);
-        asset.setStatus("ACTIVE");
-        asset.setCreatedAt(LocalDateTime.now());
-        asset.setUpdatedAt(LocalDateTime.now());
 
+        // Default status
+        if (asset.getStatus() == null || asset.getStatus().isBlank()) {
+            asset.setStatus("ACTIVE");
+        }
+
+        // Audit fields handled by @PrePersist/@PreUpdate in entity
         return assetRepository.save(asset);
     }
 
@@ -65,11 +69,12 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Asset getAsset(Long id) {
         return assetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Asset not found with id " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
     }
 
     @Override
     public List<Asset> getAssetsByStatus(String status) {
-        return assetRepository.findByStatusIgnoreCase(status);
+        // Normalize case
+        return assetRepository.findByStatus(status.toUpperCase());
     }
 }
