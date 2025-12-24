@@ -1,16 +1,11 @@
+// src/main/java/com/example/demo/repository/AssetLifecycleEventRepository.java
 package com.example.demo.repository;
 
 import com.example.demo.entity.AssetLifecycleEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-@Repository
 public interface AssetLifecycleEventRepository extends JpaRepository<AssetLifecycleEvent, Long> {
-
-    // Order events by when they were logged, most recent first
-    List<AssetLifecycleEvent> findByAssetIdOrderByLoggedAtDesc(Long assetId);
-
-    // Add this to satisfy tests that expect findByAssetIdOrderByEventDateDesc
     List<AssetLifecycleEvent> findByAssetIdOrderByEventDateDesc(Long assetId);
 }
