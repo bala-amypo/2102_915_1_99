@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/entity/Vendor.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -17,6 +16,8 @@ public class Vendor {
     private String contactEmail;
 
     private String phone;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public Vendor() {}
@@ -28,8 +29,15 @@ public class Vendor {
         this.createdAt = LocalDateTime.now();
     }
 
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; } // used in a mock scenario
+    public void setId(Long id) { this.id = id; }
     public String getVendorName() { return vendorName; }
     public void setVendorName(String vendorName) { this.vendorName = vendorName; }
     public String getContactEmail() { return contactEmail; }

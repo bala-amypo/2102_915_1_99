@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/entity/User.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -20,6 +19,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -38,8 +38,15 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; } // not typical, but safe
+    public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getEmail() { return email; }
