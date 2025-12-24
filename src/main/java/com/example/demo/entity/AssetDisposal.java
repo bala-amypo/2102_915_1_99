@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/entity/AssetDisposal.java
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -8,7 +7,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "asset_disposals")
 public class AssetDisposal {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(optional = false)
@@ -26,6 +26,7 @@ public class AssetDisposal {
     @ManyToOne
     private User approvedBy;
 
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public AssetDisposal() {}
@@ -37,6 +38,13 @@ public class AssetDisposal {
         this.disposalDate = date;
         this.approvedBy = approvedBy;
         this.createdAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() { return id; }
