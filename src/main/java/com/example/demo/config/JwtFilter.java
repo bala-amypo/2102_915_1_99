@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/config/JwtFilter.java
 package com.example.demo.config;
 
 import com.example.demo.service.impl.CustomUserDetailsService;
@@ -11,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.filter.OncePerRequestFilter;
+import org.springframework.web.filter.OncePerRequestFilter;  // FIXED import
 
 import java.io.IOException;
 
