@@ -8,7 +8,15 @@ import java.util.List;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
+
     boolean existsByAssetTagIgnoreCase(String assetTag);
+
     List<Asset> findByStatusIgnoreCase(String status);
+
     List<Asset> findByVendor(Vendor vendor);
+
+    // Add these to satisfy tests that expect case-sensitive versions
+    boolean existsByAssetTag(String assetTag);
+
+    List<Asset> findByStatus(String status);
 }

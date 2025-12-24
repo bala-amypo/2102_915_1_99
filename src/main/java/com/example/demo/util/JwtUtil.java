@@ -19,10 +19,23 @@ public class JwtUtil {
 
     private final long expirationMs = 24 * 60 * 60 * 1000; // 24 hours
 
+    // Original method (4 args)
     public String generateToken(String username, String email, Long userId, Set<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("email", email)
+                .claim("userId", userId)
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // Overloaded method (3 args) to satisfy tests
+    public String generateToken(String username, Long userId, Set<String> roles) {
+        return Jwts.builder()
+                .setSubject(username)
                 .claim("userId", userId)
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
@@ -66,7 +79,8 @@ public class JwtUtil {
         return Set.of();
     }
 
-    private Claims getClaims(String token) {
+    // Make this public so tests can call it
+    public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

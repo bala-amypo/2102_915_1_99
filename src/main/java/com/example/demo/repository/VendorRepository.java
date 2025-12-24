@@ -10,4 +10,7 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
     boolean existsByVendorNameIgnoreCase(String vendorName);
 
     Optional<Vendor> findByVendorNameIgnoreCase(String vendorName);
+
+    // Add this to satisfy tests that expect findByVendorName(String)
+    Optional<Vendor> findByVendorName(String vendorName);
 }
