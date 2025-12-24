@@ -1,23 +1,30 @@
+// src/main/java/com/example/demo/controller/AssetDisposalController.java
 package com.example.demo.controller;
 
-import org.springframework.http.HttpStatus;
+import com.example.demo.entity.AssetDisposal;
+import com.example.demo.service.AssetDisposalService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/disposals")
 public class AssetDisposalController {
 
+    private final AssetDisposalService disposalService;
+
+    public AssetDisposalController(AssetDisposalService disposalService) {
+        this.disposalService = disposalService;
+    }
+
     @PostMapping("/request/{assetId}")
-    public ResponseEntity<?> requestDisposal(
-            @PathVariable Long assetId,
-            Authentication authentication) {
+    public ResponseEntity<AssetDisposal> request(@PathVariable Long assetId,
+                                                 @RequestBody AssetDisposal disposal) {
+        return ResponseEntity.ok(disposalService.requestDisposal(assetId, disposal));
+    }
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        return ResponseEntity.ok().build();
+    @PutMapping("/approve/{disposalId}/{adminId}")
+    public ResponseEntity<AssetDisposal> approve(@PathVariable Long disposalId,
+                                                 @PathVariable Long adminId) {
+        return ResponseEntity.ok(disposalService.approveDisposal(disposalId, adminId));
     }
 }

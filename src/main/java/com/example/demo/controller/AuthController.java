@@ -1,73 +1,53 @@
+// src/main/java/com/example/demo/controller/AuthController.java
 package com.example.demo.controller;
 
-import com.example.demo.entity.Role;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.User;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
 import com.example.demo.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder encoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    public AuthController(UserService userService, JwtUtil jwtUtil, PasswordEncoder encoder) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
+        this.encoder = encoder;
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        // Prevent duplicate email or username
-        if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
-            throw new BadRequestException("Email already registered");
-        }
-        if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
-            throw new BadRequestException("Username already taken");
-        }
-
-        // Encode password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User saved = userRepository.save(user);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> body) {
+        User u = new User();
+        u.setName(body.getOrDefault("name", "User"));
+        u.setEmail(body.get("email"));
+        u.setPassword(body.getOrDefault("password", "password"));
+        User saved = userService.registerUser(u);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("id", saved.getId());
+        resp.put("email", saved.getEmail());
+        return ResponseEntity.ok(resp);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
-        User user = userRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-
-        // Verify password
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.status(401).body("Invalid credentials");
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
+        User user = userService.findByEmail(req.getEmail());
+        if (!encoder.matches(req.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).build();
         }
-
-        Set<String> roles = user.getRoles()
-                .stream()
-                .map(Role::getName)
-                .collect(Collectors.toSet());
-
-        // Generate JWT with username, email, userId, roles
-        String token = jwtUtil.generateToken(
-                user.getUsername(),
-                user.getEmail(),
-                user.getId(),
-                roles
-        );
-
-        return ResponseEntity.ok(token);
+        Set<String> roles = user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getId(), roles);
+        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), roles));
     }
 }

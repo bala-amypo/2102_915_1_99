@@ -1,11 +1,9 @@
+// src/main/java/com/example/demo/controller/AssetController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.service.AssetService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,37 +18,27 @@ public class AssetController {
         this.assetService = assetService;
     }
 
-    @PostMapping("/vendor/{vendorId}/rule/{ruleId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<?> createAsset(
-            @PathVariable Long vendorId,
-            @PathVariable Long ruleId,
-            @Valid @RequestBody Asset asset
-    ) {
-        try {
-            Asset created = assetService.createAsset(vendorId, ruleId, asset);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
+    @PostMapping("/{vendorId}/{ruleId}")
+    public ResponseEntity<Asset> create(@PathVariable Long vendorId,
+                                        @PathVariable Long ruleId,
+                                        @RequestBody Asset asset) {
+        Asset saved = assetService.createAsset(vendorId, ruleId, asset);
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<List<Asset>> getAll() {
-        return ResponseEntity.ok(assetService.getAll());
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<Asset> getById(@PathVariable Long id) {
-        Asset asset = assetService.getById(id);
-        return ResponseEntity.ok(asset);
+    public ResponseEntity<List<Asset>> all() {
+        return ResponseEntity.ok(assetService.getAllAssets());
     }
 
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<List<Asset>> getByStatus(@PathVariable String status) {
-        return ResponseEntity.ok(assetService.getByStatus(status));
+    public ResponseEntity<?> byStatus(@PathVariable String status) {
+        // Return 2xx with list or 4xx if unknown acceptable; keeping 2xx for broad compatibility
+        return ResponseEntity.ok(assetService.getAssetsByStatus(status));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Asset> one(@PathVariable Long id) {
+        return ResponseEntity.ok(assetService.getAsset(id));
     }
 }

@@ -1,90 +1,59 @@
+// src/main/java/com/example/demo/util/JwtUtil.java
 package com.example.demo.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 public class JwtUtil {
 
-    private final Key key = Keys.hmacShaKeyFor(
-            "mysecretkeymysecretkeymysecretkey12345".getBytes()
-    );
+    // Simple static secret to avoid relying on external config in tests
+    private final Key key = Keys.hmacShaKeyFor("very-strong-secret-key-for-tests-0123456789".getBytes(StandardCharsets.UTF_8));
+    private final long expirationMillis = 1000L * 60 * 60; // 1 hour
 
-    private final long expirationMs = 24 * 60 * 60 * 1000; // 24 hours
-
-    // Required by hidden tests: email, userId, roles
     public String generateToken(String email, Long userId, Set<String> roles) {
-        return Jwts.builder()
-                .setSubject(email) // subject must be the email
-                .claim("userId", userId)
-                .claim("roles", roles)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", email);
+        claims.put("userId", userId);
+        claims.put("roles", roles != null ? roles : Collections.emptySet());
 
-    // Optional overload if you want username + email both
-    public String generateToken(String username, String email, Long userId, Set<String> roles) {
+        long now = System.currentTimeMillis();
         return Jwts.builder()
-                .setSubject(email) // still use email as subject
-                .claim("username", username)
-                .claim("email", email)
-                .claim("userId", userId)
-                .claim("roles", roles)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+            .setClaims(claims)
+            .setSubject(email)
+            .setIssuedAt(new Date(now))
+            .setExpiration(new Date(now + expirationMillis))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            getClaims(token);
+            getAllClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    public boolean isTokenExpired(String token) {
-        return getClaims(token).getExpiration().before(new Date());
-    }
-
-    public String getUsernameFromToken(String token) {
-        return getClaims(token).get("username", String.class);
-    }
-
-    public String getEmailFromToken(String token) {
-        return getClaims(token).getSubject(); // subject is the email
-    }
-
-    public Long getUserIdFromToken(String token) {
-        return getClaims(token).get("userId", Long.class);
-    }
-
-    public Set<String> getRolesFromToken(String token) {
-        Object roles = getClaims(token).get("roles");
-        if (roles instanceof List<?>) {
-            return ((List<?>) roles).stream()
-                    .map(Object::toString)
-                    .collect(Collectors.toSet());
+    public Map<String, Object> getClaims(String token) {
+        Claims c = getAllClaims(token);
+        Map<String, Object> map = new HashMap<>();
+        for (Map.Entry<String, Object> e : c.entrySet()) {
+            map.put(e.getKey(), e.getValue());
         }
-        return Set.of();
+        // also include subject if needed
+        map.putIfAbsent("email", c.get("email") != null ? c.get("email") : c.getSubject());
+        return map;
     }
 
-    public Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    private Claims getAllClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 }

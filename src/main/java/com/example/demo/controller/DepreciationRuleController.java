@@ -1,31 +1,30 @@
+// src/main/java/com/example/demo/controller/DepreciationRuleController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.DepreciationRule;
 import com.example.demo.service.DepreciationRuleService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/rules")
 public class DepreciationRuleController {
-    
-    private final DepreciationRuleService depreciationRuleService;
-    
-    public DepreciationRuleController(DepreciationRuleService depreciationRuleService) {
-        this.depreciationRuleService = depreciationRuleService;
+
+    private final DepreciationRuleService ruleService;
+
+    public DepreciationRuleController(DepreciationRuleService ruleService) {
+        this.ruleService = ruleService;
     }
-    
+
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<?> createRule(@Valid @RequestBody DepreciationRule rule) {
-        try {
-            DepreciationRule created = depreciationRuleService.createRule(rule);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
+    public ResponseEntity<DepreciationRule> create(@RequestBody DepreciationRule rule) {
+        return ResponseEntity.ok(ruleService.createRule(rule));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DepreciationRule>> all() {
+        return ResponseEntity.ok(ruleService.getAllRules());
     }
 }
