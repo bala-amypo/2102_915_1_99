@@ -3,7 +3,7 @@ package com.example.demo.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -13,8 +13,10 @@ import java.util.*;
 @Component
 public class JwtUtil {
 
-    // Simple static secret to avoid relying on external config in tests
-    private final Key key = Keys.hmacShaKeyFor("very-strong-secret-key-for-tests-0123456789".getBytes(StandardCharsets.UTF_8));
+    // Static secret for tests
+    private final Key key = Keys.hmacShaKeyFor(
+        "very-strong-secret-key-for-tests-0123456789".getBytes(StandardCharsets.UTF_8)
+    );
     private final long expirationMillis = 1000L * 60 * 60; // 1 hour
 
     public String generateToken(String email, Long userId, Set<String> roles) {
@@ -42,18 +44,47 @@ public class JwtUtil {
         }
     }
 
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public String extractUsername(String token) {
+        return getAllClaims(token).getSubject();
+    }
+
+    public Long extractUserId(String token) {
+        Object id = getAllClaims(token).get("userId");
+        return id != null ? Long.valueOf(id.toString()) : null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<String> extractRoles(String token) {
+        Object roles = getAllClaims(token).get("roles");
+        if (roles instanceof Collection<?>) {
+            Set<String> result = new HashSet<>();
+            for (Object r : (Collection<?>) roles) {
+                result.add(r.toString());
+            }
+            return result;
+        }
+        return Collections.emptySet();
+    }
+
     public Map<String, Object> getClaims(String token) {
         Claims c = getAllClaims(token);
-        Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<String, Object> e : c.entrySet()) {
-            map.put(e.getKey(), e.getValue());
-        }
-        // also include subject if needed
+        Map<String, Object> map = new HashMap<>(c);
         map.putIfAbsent("email", c.get("email") != null ? c.get("email") : c.getSubject());
         return map;
     }
 
+    private boolean isTokenExpired(String token) {
+        Date expiration = getAllClaims(token).getExpiration();
+        return expiration.before(new Date());
+    }
+
     private Claims getAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                   .parseClaimsJws(token).getBody();
     }
 }
