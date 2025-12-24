@@ -30,9 +30,20 @@ public class DataSeeder {
         return args -> {
             // Ensure roles ADMIN and USER exist
             Role adminRole = roleRepository.findByName("ADMIN")
-                    .orElseGet(() -> roleRepository.save(new Role("ADMIN")));
+                    .orElseGet(() -> {
+                        Role r = new Role("ADMIN");
+                        r.setCreatedAt(LocalDateTime.now());
+                        r.setUpdatedAt(LocalDateTime.now());
+                        return roleRepository.save(r);
+                    });
+
             Role userRole = roleRepository.findByName("USER")
-                    .orElseGet(() -> roleRepository.save(new Role("USER")));
+                    .orElseGet(() -> {
+                        Role r = new Role("USER");
+                        r.setCreatedAt(LocalDateTime.now());
+                        r.setUpdatedAt(LocalDateTime.now());
+                        return roleRepository.save(r);
+                    });
 
             // Ensure integration admin user exists
             userRepository.findByEmail("integration_admin@example.com").orElseGet(() -> {
@@ -42,6 +53,7 @@ public class DataSeeder {
                 admin.setPassword(passwordEncoder.encode("adminpass"));
                 admin.setRoles(Set.of(adminRole));
                 admin.setCreatedAt(LocalDateTime.now());
+                admin.setUpdatedAt(LocalDateTime.now());
                 return userRepository.save(admin);
             });
 
@@ -53,6 +65,7 @@ public class DataSeeder {
                 user.setPassword(passwordEncoder.encode("userpass"));
                 user.setRoles(Set.of(userRole));
                 user.setCreatedAt(LocalDateTime.now());
+                user.setUpdatedAt(LocalDateTime.now());
                 return userRepository.save(user);
             });
 
@@ -63,6 +76,7 @@ public class DataSeeder {
                 v.setContactEmail("vendor@example.com");
                 v.setPhone("0000000000");
                 v.setCreatedAt(LocalDateTime.now());
+                v.setUpdatedAt(LocalDateTime.now());
                 return vendorRepository.save(v);
             });
 
@@ -74,6 +88,7 @@ public class DataSeeder {
                 rule.setUsefulLifeYears(5);
                 rule.setSalvageValue(0.0);
                 rule.setCreatedAt(LocalDateTime.now());
+                rule.setUpdatedAt(LocalDateTime.now());
                 return ruleRepository.save(rule);
             });
         };
