@@ -1,19 +1,18 @@
-// src/main/java/com/example/demo/config/SecurityConfig.java
 package com.example.demo.config;
 
-import com.example.demo.util.JwtUtil;
 import com.example.demo.service.impl.CustomUserDetailsService;
+import com.example.demo.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -21,13 +20,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // BCrypt is expected by hidden tests for password encoding
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
-        return new JwtAuthenticationEntryPoint();
     }
 
     @Bean
@@ -36,24 +29,34 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-                                           JwtFilter jwtFilter,
-                                           JwtAuthenticationEntryPoint entryPoint) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            JwtFilter jwtFilter
+    ) throws Exception {
+
+        http
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers("/", "/actuator/health",
-                                 "/auth/register", "/auth/login",
-                                 "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                // Protected API endpoints
+                .requestMatchers(
+                        "/",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/auth/**",
+                        "/actuator/health"
+                ).permitAll()
                 .requestMatchers("/api/**").authenticated()
-                // Everything else permitted
                 .anyRequest().permitAll()
             )
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint));
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Unauthorized\"}");
+                    response.getWriter().flush();
+                })
+            );
 
-        // Add JWT filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
