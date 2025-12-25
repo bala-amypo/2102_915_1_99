@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -16,8 +17,9 @@ public class AssetDisposal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "asset_id", nullable = false, unique = true)
+    @JsonIgnoreProperties({"lifecycleEvents", "vendor", "depreciationRule"})
     private Asset asset;
 
     @NotBlank(message = "Disposal method is required")
@@ -33,8 +35,9 @@ public class AssetDisposal {
     @Column(nullable = false)
     private LocalDate disposalDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by_id")
+    @JsonIgnoreProperties({"roles", "password"})
     private User approvedBy;
 
     @Column(name = "created_at", nullable = false)
@@ -43,13 +46,20 @@ public class AssetDisposal {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public AssetDisposal() {}
+    public AssetDisposal() {
+    }
 
-    public AssetDisposal(Asset asset, String method, Double value, LocalDate date, User approvedBy) {
+    public AssetDisposal(
+            Asset asset,
+            String disposalMethod,
+            Double disposalValue,
+            LocalDate disposalDate,
+            User approvedBy
+    ) {
         this.asset = asset;
-        this.disposalMethod = method;
-        this.disposalValue = value;
-        this.disposalDate = date;
+        this.disposalMethod = disposalMethod;
+        this.disposalValue = disposalValue;
+        this.disposalDate = disposalDate;
         this.approvedBy = approvedBy;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -71,42 +81,80 @@ public class AssetDisposal {
         updatedAt = LocalDateTime.now();
     }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Asset getAsset() { return asset; }
-    public void setAsset(Asset asset) { this.asset = asset; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getDisposalMethod() { return disposalMethod; }
-    public void setDisposalMethod(String disposalMethod) { this.disposalMethod = disposalMethod; }
+    public Asset getAsset() {
+        return asset;
+    }
 
-    public Double getDisposalValue() { return disposalValue; }
-    public void setDisposalValue(Double disposalValue) { this.disposalValue = disposalValue; }
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
 
-    public LocalDate getDisposalDate() { return disposalDate; }
-    public void setDisposalDate(LocalDate disposalDate) { this.disposalDate = disposalDate; }
+    public String getDisposalMethod() {
+        return disposalMethod;
+    }
 
-    public User getApprovedBy() { return approvedBy; }
-    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
+    public void setDisposalMethod(String disposalMethod) {
+        this.disposalMethod = disposalMethod;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Double getDisposalValue() {
+        return disposalValue;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public void setDisposalValue(Double disposalValue) {
+        this.disposalValue = disposalValue;
+    }
 
-    // equals and hashCode based on id
+    public LocalDate getDisposalDate() {
+        return disposalDate;
+    }
+
+    public void setDisposalDate(LocalDate disposalDate) {
+        this.disposalDate = disposalDate;
+    }
+
+    public User getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(User approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AssetDisposal)) return false;
-        AssetDisposal other = (AssetDisposal) o;
-        return Objects.equals(id, other.id);
+        AssetDisposal that = (AssetDisposal) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id);
     }
 }

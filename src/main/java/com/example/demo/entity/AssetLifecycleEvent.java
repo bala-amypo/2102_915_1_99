@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,8 +16,9 @@ public class AssetLifecycleEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "asset_id", nullable = false)
+    @JsonIgnoreProperties({"lifecycleEvents", "vendor", "depreciationRule"})
     private Asset asset;
 
     @NotBlank(message = "Event type is required")
@@ -37,9 +39,15 @@ public class AssetLifecycleEvent {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public AssetLifecycleEvent() {}
+    public AssetLifecycleEvent() {
+    }
 
-    public AssetLifecycleEvent(Asset asset, String eventType, String eventDescription, LocalDate eventDate) {
+    public AssetLifecycleEvent(
+            Asset asset,
+            String eventType,
+            String eventDescription,
+            LocalDate eventDate
+    ) {
         this.asset = asset;
         this.eventType = eventType;
         this.eventDescription = eventDescription;
@@ -64,39 +72,72 @@ public class AssetLifecycleEvent {
         updatedAt = LocalDateTime.now();
     }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Asset getAsset() { return asset; }
-    public void setAsset(Asset asset) { this.asset = asset; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEventType() { return eventType; }
-    public void setEventType(String eventType) { this.eventType = eventType; }
+    public Asset getAsset() {
+        return asset;
+    }
 
-    public String getEventDescription() { return eventDescription; }
-    public void setEventDescription(String eventDescription) { this.eventDescription = eventDescription; }
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
 
-    public LocalDate getEventDate() { return eventDate; }
-    public void setEventDate(LocalDate eventDate) { this.eventDate = eventDate; }
+    public String getEventType() {
+        return eventType;
+    }
 
-    public LocalDateTime getLoggedAt() { return loggedAt; }
-    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getEventDescription() {
+        return eventDescription;
+    }
 
-    // equals and hashCode based on id
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
+    }
+
+    public LocalDate getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDate eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public LocalDateTime getLoggedAt() {
+        return loggedAt;
+    }
+
+    public void setLoggedAt(LocalDateTime loggedAt) {
+        this.loggedAt = loggedAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AssetLifecycleEvent)) return false;
-        AssetLifecycleEvent other = (AssetLifecycleEvent) o;
-        return Objects.equals(id, other.id);
+        AssetLifecycleEvent that = (AssetLifecycleEvent) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id);
     }
 }
