@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +12,10 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "assets", uniqueConstraints = @UniqueConstraint(columnNames = "assetTag"))
+@Table(
+    name = "assets",
+    uniqueConstraints = @UniqueConstraint(columnNames = "assetTag")
+)
 public class Asset {
 
     @Id
@@ -25,8 +30,9 @@ public class Asset {
     @Column(nullable = false)
     private String assetName;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vendor_id", nullable = false)
+    @JsonIgnoreProperties({"assets"})
     private Vendor vendor;
 
     private LocalDate purchaseDate;
@@ -35,8 +41,9 @@ public class Asset {
     @Column(nullable = false)
     private Double purchaseCost;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "depreciation_rule_id", nullable = false)
+    @JsonIgnoreProperties({"assets"})
     private DepreciationRule depreciationRule;
 
     @Column(nullable = false)
@@ -48,19 +55,32 @@ public class Asset {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "asset",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    @JsonIgnore
     private Set<AssetLifecycleEvent> lifecycleEvents = new HashSet<>();
 
-    public Asset() {}
+    public Asset() {
+    }
 
-    public Asset(String assetTag, String assetName, Vendor vendor,
-                 LocalDate purchaseDate, Double purchaseCost, DepreciationRule rule) {
+    public Asset(
+            String assetTag,
+            String assetName,
+            Vendor vendor,
+            LocalDate purchaseDate,
+            Double purchaseCost,
+            DepreciationRule depreciationRule
+    ) {
         this.assetTag = assetTag;
         this.assetName = assetName;
         this.vendor = vendor;
         this.purchaseDate = purchaseDate;
         this.purchaseCost = purchaseCost;
-        this.depreciationRule = rule;
+        this.depreciationRule = depreciationRule;
         this.status = "ACTIVE";
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -82,51 +102,104 @@ public class Asset {
         updatedAt = LocalDateTime.now();
     }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getAssetTag() { return assetTag; }
-    public void setAssetTag(String assetTag) { this.assetTag = assetTag; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getAssetName() { return assetName; }
-    public void setAssetName(String assetName) { this.assetName = assetName; }
+    public String getAssetTag() {
+        return assetTag;
+    }
 
-    public Vendor getVendor() { return vendor; }
-    public void setVendor(Vendor vendor) { this.vendor = vendor; }
+    public void setAssetTag(String assetTag) {
+        this.assetTag = assetTag;
+    }
 
-    public LocalDate getPurchaseDate() { return purchaseDate; }
-    public void setPurchaseDate(LocalDate purchaseDate) { this.purchaseDate = purchaseDate; }
+    public String getAssetName() {
+        return assetName;
+    }
 
-    public Double getPurchaseCost() { return purchaseCost; }
-    public void setPurchaseCost(Double purchaseCost) { this.purchaseCost = purchaseCost; }
+    public void setAssetName(String assetName) {
+        this.assetName = assetName;
+    }
 
-    public DepreciationRule getDepreciationRule() { return depreciationRule; }
-    public void setDepreciationRule(DepreciationRule depreciationRule) { this.depreciationRule = depreciationRule; }
+    public Vendor getVendor() {
+        return vendor;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public void setPurchaseDate(LocalDate purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
 
-    public Set<AssetLifecycleEvent> getLifecycleEvents() { return lifecycleEvents; }
-    public void setLifecycleEvents(Set<AssetLifecycleEvent> lifecycleEvents) { this.lifecycleEvents = lifecycleEvents; }
+    public Double getPurchaseCost() {
+        return purchaseCost;
+    }
 
-    // equals and hashCode based on id
+    public void setPurchaseCost(Double purchaseCost) {
+        this.purchaseCost = purchaseCost;
+    }
+
+    public DepreciationRule getDepreciationRule() {
+        return depreciationRule;
+    }
+
+    public void setDepreciationRule(DepreciationRule depreciationRule) {
+        this.depreciationRule = depreciationRule;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Set<AssetLifecycleEvent> getLifecycleEvents() {
+        return lifecycleEvents;
+    }
+
+    public void setLifecycleEvents(Set<AssetLifecycleEvent> lifecycleEvents) {
+        this.lifecycleEvents = lifecycleEvents;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Asset)) return false;
-        Asset other = (Asset) o;
-        return Objects.equals(id, other.id);
+        Asset asset = (Asset) o;
+        return Objects.equals(id, asset.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id);
     }
 }
