@@ -2,7 +2,6 @@ package com.example.demo.config;
 
 import com.example.demo.service.impl.CustomUserDetailsService;
 import com.example.demo.util.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -36,6 +35,7 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
+            .httpBasic(httpBasic -> httpBasic.disable())   // 🔴 CRITICAL FIX
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
