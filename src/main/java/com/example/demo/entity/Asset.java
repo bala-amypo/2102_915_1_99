@@ -13,9 +13,10 @@ import java.util.Set;
 
 @Entity
 @Table(
-    name = "assets",
-    uniqueConstraints = @UniqueConstraint(columnNames = "assetTag")
+        name = "assets",
+        uniqueConstraints = @UniqueConstraint(columnNames = "assetTag")
 )
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Asset {
 
     @Id
@@ -32,7 +33,7 @@ public class Asset {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vendor_id", nullable = false)
-    @JsonIgnoreProperties({"assets"})
+    @JsonIgnoreProperties({"assets", "hibernateLazyInitializer", "handler"})
     private Vendor vendor;
 
     private LocalDate purchaseDate;
@@ -43,7 +44,7 @@ public class Asset {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "depreciation_rule_id", nullable = false)
-    @JsonIgnoreProperties({"assets"})
+    @JsonIgnoreProperties({"assets", "hibernateLazyInitializer", "handler"})
     private DepreciationRule depreciationRule;
 
     @Column(nullable = false)
@@ -56,10 +57,10 @@ public class Asset {
     private LocalDateTime updatedAt;
 
     @OneToMany(
-        mappedBy = "asset",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
+            mappedBy = "asset",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     @JsonIgnore
     private Set<AssetLifecycleEvent> lifecycleEvents = new HashSet<>();

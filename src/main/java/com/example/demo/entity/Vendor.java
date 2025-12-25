@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,9 +12,10 @@ import java.util.Set;
 
 @Entity
 @Table(
-    name = "vendors",
-    uniqueConstraints = @UniqueConstraint(columnNames = "vendorName")
+        name = "vendors",
+        uniqueConstraints = @UniqueConstraint(columnNames = "vendorName")
 )
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Vendor {
 
     @Id
@@ -38,10 +40,10 @@ public class Vendor {
     private LocalDateTime updatedAt;
 
     @OneToMany(
-        mappedBy = "vendor",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
+            mappedBy = "vendor",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     @JsonIgnore
     private Set<Asset> assets = new HashSet<>();
