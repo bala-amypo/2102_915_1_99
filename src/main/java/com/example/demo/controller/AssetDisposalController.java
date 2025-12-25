@@ -20,8 +20,8 @@ public class AssetDisposalController {
     @PostMapping("/request/{assetId}")
     public ResponseEntity<?> request(
             @PathVariable Long assetId,
-            @RequestBody AssetDisposal disposal,
-            Authentication authentication
+            Authentication authentication,
+            @RequestBody(required = false) AssetDisposal disposal
     ) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
