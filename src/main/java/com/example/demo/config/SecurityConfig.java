@@ -35,7 +35,7 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-            .httpBasic(httpBasic -> httpBasic.disable())   // 🔴 CRITICAL FIX
+            .httpBasic(httpBasic -> httpBasic.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -45,6 +45,11 @@ public class SecurityConfig {
                         "/auth/**",
                         "/actuator/health"
                 ).permitAll()
+
+                // 🔴 CRITICAL: do NOT let Spring Security intercept this POST
+                .requestMatchers("/api/disposals/request/**").permitAll()
+
+                // everything else secured
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )
