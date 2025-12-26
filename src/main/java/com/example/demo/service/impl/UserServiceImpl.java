@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/service/impl/UserServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Role;
@@ -11,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,26 +27,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user) {
+
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email required");
         }
+
         if (userRepo.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
+
         user.setPassword(encoder.encode(user.getPassword()));
-        Role defaultRole = roleRepo.findByName("USER").orElseGet(() -> roleRepo.save(new Role("USER")));
+
+        if (user.getRoles() == null) {
+            user.setRoles(new HashSet<>());
+        }
+
+        Role defaultRole = roleRepo.findByName("USER")
+                .orElseGet(() -> roleRepo.save(new Role("USER")));
+
         user.getRoles().add(defaultRole);
         user.setCreatedAt(LocalDateTime.now());
+
         return userRepo.save(user);
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Override
     public User findById(Long id) {
-        return userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
