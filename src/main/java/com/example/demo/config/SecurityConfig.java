@@ -46,7 +46,7 @@ public class SecurityConfig {
                         "/actuator/health"
                 ).permitAll()
 
-                // 🔴 CRITICAL: do NOT let Spring Security intercept this POST
+                
                 .requestMatchers("/api/disposals/request/**").permitAll()
 
                 // everything else secured
