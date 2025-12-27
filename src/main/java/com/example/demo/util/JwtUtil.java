@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/util/JwtUtil.java
 package com.example.demo.util;
 
 import io.jsonwebtoken.*;
@@ -13,78 +12,116 @@ import java.util.*;
 @Component
 public class JwtUtil {
 
-    // Static secret for tests
-    private final Key key = Keys.hmacShaKeyFor(
-        "very-strong-secret-key-for-tests-0123456789".getBytes(StandardCharsets.UTF_8)
-    );
-    private final long expirationMillis = 1000L * 60 * 60; // 1 hour
+    private static final String SECRET =
+            "very-strong-secret-key-for-tests-0123456789";
+
+    private static final long EXPIRATION_MILLIS = 1000L * 60 * 60;
+
+    private final Key key;
+
+    public JwtUtil() {
+        this.key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(String email, Long userId, Set<String> roles) {
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         claims.put("userId", userId);
-        claims.put("roles", roles != null ? roles : Collections.emptySet());
+        claims.put("roles", roles == null ? Collections.emptySet() : roles);
 
-        long now = System.currentTimeMillis();
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + EXPIRATION_MILLIS);
+
         return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(email)
-            .setIssuedAt(new Date(now))
-            .setExpiration(new Date(now + expirationMillis))
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact();
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public boolean validateToken(String token) {
+        if (token == null || token.isBlank()) {
+            return false;
+        }
         try {
-            getAllClaims(token);
+            parse(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        if (!validateToken(token)) {
+            return false;
+        }
+        String username = extractUsername(token);
+        return username != null
+                && username.equals(userDetails.getUsername())
+                && !isTokenExpired(token);
     }
 
     public String extractUsername(String token) {
-        return getAllClaims(token).getSubject();
+        try {
+            return parse(token).getSubject();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public Long extractUserId(String token) {
-        Object id = getAllClaims(token).get("userId");
-        return id != null ? Long.valueOf(id.toString()) : null;
+        try {
+            Object id = parse(token).get("userId");
+            return id == null ? null : Long.valueOf(id.toString());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    @SuppressWarnings("unchecked")
     public Set<String> extractRoles(String token) {
-        Object roles = getAllClaims(token).get("roles");
-        if (roles instanceof Collection<?>) {
-            Set<String> result = new HashSet<>();
-            for (Object r : (Collection<?>) roles) {
-                result.add(r.toString());
+        try {
+            Object roles = parse(token).get("roles");
+            if (roles instanceof Collection<?>) {
+                Set<String> result = new HashSet<>();
+                for (Object r : (Collection<?>) roles) {
+                    result.add(r.toString());
+                }
+                return result;
             }
-            return result;
+            return Collections.emptySet();
+        } catch (Exception e) {
+            return Collections.emptySet();
         }
-        return Collections.emptySet();
     }
 
     public Map<String, Object> getClaims(String token) {
-        Claims c = getAllClaims(token);
-        Map<String, Object> map = new HashMap<>(c);
-        map.putIfAbsent("email", c.get("email") != null ? c.get("email") : c.getSubject());
-        return map;
+        try {
+            Claims claims = parse(token);
+            Map<String, Object> map = new HashMap<>(claims);
+            map.putIfAbsent("email", claims.getSubject());
+            return map;
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
     }
 
     private boolean isTokenExpired(String token) {
-        Date expiration = getAllClaims(token).getExpiration();
-        return expiration.before(new Date());
+        try {
+            Date expiration = parse(token).getExpiration();
+            return expiration.before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
     }
 
-    private Claims getAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                   .parseClaimsJws(token).getBody();
+    private Claims parse(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
