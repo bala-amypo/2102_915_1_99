@@ -33,6 +33,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGeneric(Exception ex) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Internal Server Error");
+                .body(ex.getClass().getName() + " : " + ex.getMessage());
     }
 }
