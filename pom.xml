@@ -91,7 +91,7 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.9.0</version>
-            <scope>compile</scope>
+            
         </dependency>
 
         <!-- JUnit Jupiter (portal uses JUnitPlatformProvider) -->
