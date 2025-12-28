@@ -23,6 +23,12 @@
 
     <dependencies>
 
+        <!-- REQUIRED FOR TestRestTemplate -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -58,7 +64,6 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- JJWT (COMPATIBLE WITH parserBuilder()) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -93,6 +98,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- REQUIRED FOR TestRestTemplate -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
