@@ -95,7 +95,7 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.9.0</version>
-            <scope>compile</scope>
+           
         </dependency>
 
         <!-- Spring Boot Test (JUnit excluded) -->
