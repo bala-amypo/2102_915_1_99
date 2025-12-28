@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/controller/AuthController.java
 package com.example.demo.controller;
 
 import com.example.demo.dto.AuthRequest;
@@ -12,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,38 +22,47 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserService userService, JwtUtil jwtUtil, PasswordEncoder encoder) {
+    public AuthController(UserService userService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
-        this.encoder = encoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> body) {
-        User u = new User();
-        u.setName(body.getOrDefault("name", "User"));
-        u.setEmail(body.get("email"));
-        u.setPassword(body.getOrDefault("password", "password"));
-        User saved = userService.registerUser(u);
+        User user = new User();
+        user.setName(body.getOrDefault("name", "User"));
+        user.setEmail(body.get("email"));
+        user.setPassword(body.getOrDefault("password", "password"));
 
-        Map<String, Object> resp = new HashMap<>();
-        resp.put("id", saved.getId());
-        resp.put("email", saved.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+        User saved = userService.registerUser(user);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", saved.getId());
+        response.put("email", saved.getEmail());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
-        User user = userService.findByEmail(req.getEmail());
-        if (!encoder.matches(req.getPassword(), user.getPassword())) {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        User user = userService.findByEmail(request.getEmail());
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Set<String> roles = user.getRoles().stream()
+
+        Set<String> roles = user.getRoles()
+                .stream()
                 .map(Role::getName)
                 .collect(Collectors.toSet());
+
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), roles);
-        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), roles));
+
+        return ResponseEntity.ok(
+                new AuthResponse(token, user.getId(), user.getEmail(), roles)
+        );
     }
 }
