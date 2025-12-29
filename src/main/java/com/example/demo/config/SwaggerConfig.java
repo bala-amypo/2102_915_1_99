@@ -17,7 +17,7 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
 
         Server server = new Server();
-        server.setUrl("https://9115.408procr.amypo.ai");
+        server.setUrl("https://9319.408procr.amypo.ai/");
 
         SecurityScheme bearerScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
